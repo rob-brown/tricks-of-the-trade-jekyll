@@ -28,7 +28,7 @@ twitter_username: robby_brown
 github_username:  rob-brown
 
 # Build settings
-theme: minima
+# theme: minima
 incremental: true
 plugins:
   - jekyll-feed
