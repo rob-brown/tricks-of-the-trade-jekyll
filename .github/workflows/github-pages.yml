@@ -11,8 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       # Use GitHub Actions' cache to shorten build times and decrease load on servers
-      - name: List dir
-        run: ls
       - uses: actions/cache@v1
         with:
           path: vendor/bundle
@@ -22,5 +20,3 @@ jobs:
       - uses: helaili/jekyll-action@2.0.4
         env:
           JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}
-        with:
-          jekyll_src: 'site'
