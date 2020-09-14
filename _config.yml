@@ -42,6 +42,7 @@ plugins:
 #
 exclude:
   - .keep
+  - .github/
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/
