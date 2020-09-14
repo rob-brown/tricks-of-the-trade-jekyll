@@ -3,6 +3,7 @@ layout: post
 title:  "Amiibo Personality Research"
 date:   2020-09-13 12:41:00 -0600
 categories: amiibo
+permalink: /posts/amiibo-personality-research
 ---
 ## Summary
 
@@ -44,8 +45,8 @@ For this experiment I chose the 8 final stage personalities:
 
 * Daredevil
 * Entertainer
-* Lively
 * Lightning Fast
+* Lively
 * Offensive
 * Sly
 * Technician
