@@ -67,7 +67,7 @@ You may claim this is just careful organizing, not an Easter egg. It probably is
 
 ## One More Thing
 
-Here's the thing that really caught my attention. Does `0x1900` have any significance? Look through the character numbers again and one might stand out. Mewtwo's character number is `0x1996`. Any longtime Pokémon fan will recognize that number. 1996 is the [year Pokémon Red and Blue released in Japan](https://en.wikipedia.org/wiki/Pokémon_Red_and_Blue). This could be complete coincidence, especially with it being Mewtwo of all Pokémon. Still it's too good to ignore.
+Here's the thing that really caught my attention. Does `0x1900` have any significance? Look through the character numbers again and one might stand out. Mewtwo's character number is `0x1996`. Any longtime Pokémon fan will recognize that number. 1996 is the [year Pokémon Red, Green, and Blue released in Japan](https://en.wikipedia.org/wiki/Pokémon_Red_and_Blue). This could be complete coincidence, especially with it being Mewtwo of all Pokémon. Still it's too good to ignore.
 
 ## Wait, What About Pokémon Trainer?
 
