@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Single Responsibility Principle"
+author: Robert Brown
 date:   2016-08-20 12:09:00 -0600
 categories:
 ---

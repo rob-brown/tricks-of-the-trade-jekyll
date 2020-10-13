@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Setting up DNS"
+author: Robert Brown
 date:   2016-07-16 07:37:00 -0600
 categories:
 ---

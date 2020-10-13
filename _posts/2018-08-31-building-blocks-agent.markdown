@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Building Blocks: Agent"
+author: Robert Brown
 date:   2018-08-31 21:24:00 -0600
 categories:
 ---

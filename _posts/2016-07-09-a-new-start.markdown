@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "A New Start"
+author: Robert Brown
 date:   2016-07-09 14:41:00 -0600
 categories:
 ---

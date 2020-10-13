@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Abusing UTF-8"
+author: Robert Brown
 date:   2018-01-03 22:00:00 -0600
 categories:
 ---

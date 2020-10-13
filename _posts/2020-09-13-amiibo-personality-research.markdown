@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Amiibo Personality Research"
+author: Robert Brown
 date:   2020-09-13 12:41:00 -0600
 categories: amiibo
 permalink: /posts/amiibo-personality-research

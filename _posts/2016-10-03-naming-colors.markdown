@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Naming Colors"
+author: Robert Brown
 date:   2016-10-03 21:00:00 -0600
 categories: ios
 ---

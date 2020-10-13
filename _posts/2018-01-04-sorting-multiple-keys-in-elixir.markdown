@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "TIL: Sorting by Multiple Keys in Elixir"
+author: Robert Brown
 date:   2018-01-04 21:30:00 -0600
 categories:
 ---

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Installing Java on Nerves"
+author: Robert Brown
 date:   2016-11-05 12:30:00 -0600
 categories: elixir nerves java
 ---

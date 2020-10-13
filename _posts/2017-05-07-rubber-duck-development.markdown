@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Rubber Duck Development"
+author: Robert Brown
 date:   2017-05-07 09:23:00 -0600
 categories:
 ---

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Building Blocks: Pure State Machine"
+author: Robert Brown
 date:   2018-08-30 22:12:00 -0600
 categories:
 ---
