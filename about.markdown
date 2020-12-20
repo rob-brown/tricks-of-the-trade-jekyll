@@ -5,21 +5,21 @@ permalink: /about
 ---
 ## Personal
 
-Currently, I am an iOS developer and software architect working for an [R&D company](http://www.newvistas.com) and doing contract work on the side. I build apps for a large variety of clients. I started iOS development in 2010.
+Currently, I am an Elixir backend developer and software architect working for [Tubi](https://tubitv.com). I have worked for agencies and as an indpendent contractor for a decade prior. During that time I built iOS apps and web backends for a large variety of clients (see below).
 
 I received my Bachelors of Science in Computer Science from [Brigham Young University](http://byu.edu).
 
-I served a two-year mission for [The Church of Jesus Christ of Latter-day Saints](https://www.lds.org/) in Winnipeg, Canada.
+I served a two-year mission for [The Church of Jesus Christ of Latter-day Saints](https://www.lds.org/) in [Winnipeg, Canada](http://www.mission.net/canada/winnipeg/missioninfo.php).
 
-I love making things. I have many [Arduinos](https://www.arduino.cc), [Raspberry Pis](https://www.raspberrypi.org), a couple [Parallelas](http://www.parallella.org), [BeagleBone Black](https://beagleboard.org/black), and other similar boards. I build my own [drones](https://www.flickr.com/photos/92242245@N04/9598282973/in/album-72157635239040891/). I own a [3D printer](https://flic.kr/p/egLBcA), I have a small woodshop, and I'm saving to buy a [laser cutter and engraver](https://voccell.com/wp/product/dls/). I coached a [robotics team](http://www.firstinspires.org) for six years (2010–2015).
+I love making things. I have many [Arduinos](https://www.arduino.cc), [Raspberry Pis](https://www.raspberrypi.org), a couple [Parallelas](http://www.parallella.org), [BeagleBone Black](https://beagleboard.org/black), and other similar boards. I build my own [drones](https://www.flickr.com/photos/92242245@N04/9598282973/in/album-72157635239040891/). I own a [3D printer](https://flic.kr/p/egLBcA), I have a small wood shop and  a [laser cutter](https://voccell.com/wp/product/dls/). I coached a [robotics team](http://www.firstinspires.org) for six years (2010–2015).
 
-I run [@elixirtip](https://twitter.com/elixirtip) on Twitter where I post daily tips on using the Elixir programming language. At the time of this writing, I have over 10,000 followers.
+I run [@elixirtip](https://twitter.com/elixirtip) on Twitter where I post daily tips on using the Elixir programming language. At the time of this writing, I have over 12,000 followers.
 
 I love software architecture and study it extensively. I strive to find and design architectures that are simple, maintainable, and comprehensible.
 
-## Apps
+## Projects
 
-Often the first question for developers is what apps they've made. The following are iOS, watchOS, macOS, and tvOS apps that I've built roughly in the order I made them. There is some overlap between them. Links are provided for apps that are publicly available on the App Store. Some apps are no longer available or are enterprise only.
+Often the first question for developers is what apps they've made. The following are iOS, watchOS, macOS, and tvOS apps that I've built roughly in the order I made them. There is some overlap between them. Links are provided for apps that are publicly available on the App Store or to respective websites. Some apps are no longer available or are enterprise only.
 
 <table>
   <thead><tr><td><strong>Project</strong></td><td><strong>Platform</strong></td><td><strong>Description</strong></td></tr></thead>
@@ -32,7 +32,8 @@ Often the first question for developers is what apps they've made. The following
     <tr><td>v-Project</td><td>iPhone</td><td>Enterprise app for a study on student choices about fruits and vegatables conducted by the Brigham Young University Economics Department.</td></tr>
     <tr><td>iSpecs UDOT</td><td>iPhone iPad</td><td>Offline access to drawings and specifications for compliance with the Utah Department of Transportation regulations.</td></tr>
     <tr><td>AboutOne</td><td>iPhone</td><td>Organize your family’s personal and medical information.</td></tr>
-    <tr><td><a href="https://kinpoint.com">Twenty Minute Geneologist</a></td><td>iPhone iPad Web</td><td>Simplifies and directs genealogical research for the time-constrained.</td></tr>
+    <tr><td><a href="https://kinpoint.com">Twenty Minute Geneologist</a></td><td>iPhone iPad Web</td><td>Simplifies and directs genealogical research for the time-constrained researcher.</td></tr>
+    <tr><td>Swipe Music</td><td>iPhone iPad Web</td><td>A gesture-based music player app.</td></tr>
     <tr><td>Presentations</td><td>iPad</td><td>Enterprise app to build Keynote-like presentations with audio-visual content from the Church of Jesus Christ of Latter-day Saints.</td></tr>
     <tr><td><a href="https://www.ifit.com">iFit</a></td><td>iPhone</td><td>Track your fitness.</td></tr>
     <tr><td>Hook'd</td><td>iPhone</td><td>Social karaoke.</td></tr>
@@ -49,12 +50,13 @@ Often the first question for developers is what apps they've made. The following
     <tr><td><a href="https://medic.life/">Medic</a></td><td>iPhone iPad Embedded</td><td>Smart toilet to measure your medical health.</td></tr>
     <tr><td><a href="https://garagesmart.com/">GarageSmart</a></td><td>iPhone iPad Web Backend</td><td>Automate and control your GarageSmart IoT devices with your phone.</td></tr>
     <tr><td><a href="https://apps.apple.com/us/app/tilt-smarthome/id1462445842">Tilt Smart Home</a></td><td>iPhone iPad</td><td>Automate and control your roller shades with your phone or voice assistant.</td></tr>
+    <tr><td><a href="https://tubitv.com">Tubi</a></td><td>Web Backend</td><td>Architect and build many features for an ad-based online streaming service. Includes managing catalog feeds with 11+ partners (Apple, Google, Amazon, etc).</td></tr>
   </tbody>
 </table>
 
 ## Programming languages
 
-Another introductory question for developers is what languages they know. Programming languages are often a form of identity for developers. I usually identify as an iOS developer since it's my full-time job. More generally I identify as a software architect, autodidact, and polyglot.
+Programming languages are often a form of identity for developers. More generally I identify as a software architect, autodidact, and polyglot.
 
 Over the years I've learned a number of programming languages. Some I've used for a single project or class. Others I've used for years. To distinguish them, I've categorized them below.
 
@@ -63,16 +65,17 @@ Over the years I've learned a number of programming languages. Some I've used fo
 The languages I enjoy using most, listed in descending order of preference.
 
 * Elixir
-* Swift
 * Rust
+* Swift
 * Elm
 
 ### Proficient languages
 
 Listed (very roughly) in descending order of proficiency.
 
-* Swift
 * Elixir
+* Swift
+* Rust
 * Objective-C
 * C
 * C++
@@ -106,6 +109,7 @@ The following are languages (listed alphabetically) I have learned through schoo
 
 * BASIC
 * C♯
+* Go
 * Haskell
 * Pharo
 * Prolog
@@ -127,6 +131,7 @@ Enough said.
 I try to follow the challenge of learning a new language each year. Most languages I learn to adopt new ideas. Other times I end up loving the language and using it regularly. The following is my bucket list ordered alphabetically.
 
 * Crystal
+* Dark
 * Eve
 * Haskell
 * Idris
