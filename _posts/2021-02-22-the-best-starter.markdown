@@ -2,7 +2,7 @@
 layout: post
 title:  The Best Starter
 author: Robert Brown
-date:   2021-01-22 20:16:00 -0600
+date:   2021-02-22 20:16:00 -0600
 categories: amiibo
 ---
 Ever since 1996 the question has been posed, "Which Pokémon is the best starter?" Super Smash Bros. Ultimate pushes this further. The Pokémon Trainer character allows choosing Squirtle, Ivysaur, and Charizard as the first Pokémon to come out. For Pokémon Day this year I wanted to find out which of the three starters work best for an amiibo.
