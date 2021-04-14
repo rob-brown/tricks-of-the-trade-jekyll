@@ -7,7 +7,7 @@ categories: amiibo
 ---
 ## Stats
 
-As a follow-up to my [previous post]({% post_url 2021-02-22-the-best-starter %}), I ran my Pokémon Trainers to 100 matches each. It took almost exactly eight weeks to go from 50 to 100. Here are the following results:
+As a follow-up to my [previous post]({% post_url 2021-02-22-the-best-starter %}), I ran my Pokémon Trainers to 100 matches each. It took seven weeks to go from 50 to 100. Here are the following results:
 
 <script src="https://gist.github.com/rob-brown/99dabe2094030882d850400ce7bf547c.js?file=pokemon-trainer-stats.csv"></script>
 
