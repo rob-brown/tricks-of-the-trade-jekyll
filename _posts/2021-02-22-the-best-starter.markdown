@@ -17,9 +17,9 @@ My hypothesis is that Squirtle is the best starter. It gets in some quick damage
 
 ## Procedure
 
-For this experiment I trained a Squirtle amiibo that performs well. I trained one following the [Exion Vault guide](https://exion-vault.com/2020/08/30/ssbu-amiibo-pokemon_trainer/). I specifically did not train it to switch, relying on the built-in AI for switching. This amiibo was able to take out an Incineroar. It has since taken out several Incineroar, King K. Rool, and Bowsers.
+For this experiment I trained a Squirtle amiibo that performs well. I trained one following the [Exion Vault guide](https://exion-vault.com/2020/08/30/ssbu-amiibo-pokemon_trainer/). I specifically did not train it to switch, relying on the built-in AI for switching. This amiibo was able to take out an Incineroar. It has since taken out several Incineroar, King K. Rool, and Bowser.
 
-<video width="560" playsinline="" src="https://production.assets.clips.twitchcdn.net/AT-cm%7C998034275.mp4?token=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22clip_uri%22%3A%22%22%2C%22device_id%22%3Anull%2C%22expires%22%3A1614122762%2C%22user_id%22%3A%22%22%2C%22version%22%3A2%7D&amp;sig=75d1f8a8ee6f885f5c498fe35dfea9b34d009af7" controls=""></video>
+<video width="560" playsinline="" src="/assets/vid/charizard-dethrones-incineroar.mp4" controls=""></video>
 
 Once I had a good performing amiibo, I spoofed it to be an Ivysaur and Charizard. These three amiibo start as their respective figures. There's also a Pokémon Trainer amiibo that can explicitly choose its starter. I made three variations of that amiibo for good measure. These six amiibo are byte-for-byte identical except for the following:
 
@@ -75,9 +75,9 @@ On the other hand, Pokémon Trainer struggles with smaller, lighter characters l
 
 There is a very stark difference between my Squirtle amiibo and the Pokémon Trainer equivalent. Seeing they are almost identical in every way, they should perform the same. Yet, the two amiibo acted very differently. The Pokémon Trainer variant Squirtle would flare blitz of the stage. It would come back and grab the ledge. It would then jump and flare blitz soaring over the opponent's head and off the other side of the stage. It would repeat this back and forth across the stage. All the while the opponent just stands there dumbfounded that this Charizard is inflicting self-damage.
 
-The other five amiibo didn't behave this way. I wish I had footage of this behavior but this is the closest I could find. It only has one jump to flare blitz.
+The other five amiibo almost never behaved this way. Here's a clip:
 
-<video width="560" playsinline="" src="/assets/vid/jump-flare-blitz.mov" controls=""></video>
+<video width="560" playsinline="" src="/assets/vid/jump-flare-blitz2.mp4" controls=""></video>
 
 I have two hypotheses about this behavior:
 
