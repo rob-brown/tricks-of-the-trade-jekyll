@@ -8,7 +8,7 @@ permalink: /posts/amiibo-personality-analysis
 ---
 ## Summary
 
-A while back, Ske reverse-engineered the SSBU amiibo personality calculation. The calculation is fairly complicated and this article will explain it to a level anyone else can understand.
+A while back, Ske reverse-engineered the SSBU amiibo personality calculation. The calculation is fairly complicated and this article will explain it to a level others can understand.
 
 ## Personality Calculation
 
@@ -25,7 +25,7 @@ The personalities are broken up into eight different branches:
 * `cau`
 * `dyn`
 
-Each of these branches have a list of attributes that add or subtract points. The number of points depends on the level of the attribute. Attributes vary from 0.0 to 1.0.
+Each branch lists attributes that add or subtract points. The number of points depends on the level of the attribute. Attributes vary from 0.0 to 1.0.
 
 Here's an example of the `def` branch.
 
@@ -33,11 +33,11 @@ If the amiibo's `offensive` attribute is above 0.26, then the `def` score is dec
 
 If the amiibo's `grounded` attribute is above 0.25, then the `def` score is increased by 18 points. If the `grounded` attribute is 0.76, then the `def` score is further increased by 18 points.
 
-All the branches, except `dyn`, require an amiibo to either have or not have an attribute above a certain level. For example, the `rsk` branch must have `appeal` (taunt) above 0.25. The `def` branch must *not* have the `offensive` attribute above 0.26. If a branch does not meet this requirement, then it cannot be that personality.
+All the branches, except `dyn`, require an amiibo to either have or not have an attribute above a certain level. For example, the `rsk` branch must have `appeal` (taunt) above 0.25. The `def` branch must *not* have the `offensive` attribute above 0.26. If a branch does not meet this requirement, then an amiibo cannot have any personality in that branch.
 
 Each of the branches has three personalities. The nominal personality is determined by the number of points scored for that branch. For example, if the `ofn` branch has over 235 points, then the personality is `Offensive`. If the score is over 180, then it's `Aggressive`. If the score is over 100, then it's Enthusiastic.
 
-SSBU calculates the score for each of the branches. Whichever branch has the highest score, defines the amiibo's personality. If no personality meets the minimum requirements, then an amiibo is defined as `Normal`. There's also a special case. If an amiibo has attributes all equal to 0, then it it `Normal`.
+SSBU calculates the score for each of the branches. Whichever branch has the highest score wins. If no branch meets the minimum requirements, then an amiibo is defined as `Normal`. There's also a special case. If an amiibo has attributes all equal to 0, then it it `Normal`.
 
 ## Personalities
 
@@ -57,13 +57,13 @@ This personality must use its shield a lot and walk on the ground. It must not n
 
 `offensive` >= 0.26
 
-#### Increases
+#### Increased by
 
 * `grounded`
 * `shield master`
 * `shield catch master`
 
-#### Decreases
+#### Decreased by
 
 * `offensive`
 * `dash`
@@ -89,7 +89,7 @@ This personality must move fast. It must be aggressive but not in the air. Colle
 
 `dash` >= 0.26
 
-#### Increases
+#### Increased by
 
 * `offensive`
 * `dash`
@@ -97,7 +97,7 @@ This personality must move fast. It must be aggressive but not in the air. Colle
 * `item collector`
 * `carrier broker`
 
-#### Decreases
+#### Decreased by
 
 * `air offensive`
 * `smash holder`
@@ -125,7 +125,7 @@ The amiibo must be aggressive and in the face of its opponents. Attacking off st
 
 `near` >= 0.25
 
-#### Increases
+#### Increased by
 
 * `near`
 * `offensive`
@@ -136,7 +136,7 @@ The amiibo must be aggressive and in the face of its opponents. Attacking off st
 * `meteor master`
 * `item throw to target`
 
-#### Decreases
+#### Decreased by
 
 * `feint shooter`
 * `item collector`
@@ -161,7 +161,7 @@ The amiibo must play aggresively off stage, especially dunking. The amiibo shoul
 
 `attack out cliff` >= 0.26
 
-#### Increases
+#### Increased by
 
 * `near`
 * `offensive`
@@ -178,7 +178,7 @@ The amiibo must play aggresively off stage, especially dunking. The amiibo shoul
 * `special flagger`
 * `carrier broker`
 
-#### Decreases
+#### Decreased by
 
 * `grounded`
 * `feint shooter`
@@ -199,7 +199,7 @@ This personality must parry. It will show off its skills including countering, p
 
 `just shield master` >= 0.26
 
-#### Increases
+#### Increased by
 
 * `attack out cliff`
 * `feint master`
@@ -221,7 +221,7 @@ This personality must parry. It will show off its skills including countering, p
 * `dash swinger`
 * `item shooter`
 
-#### Decreases
+#### Decreased by
 
 * `air offensive`
 * `carrier broker`
@@ -242,7 +242,7 @@ This personality must taunt a lot. Dunking, charging regular/smash attacks, and 
 
 `appeal` >= 0.25
 
-#### Increases
+#### Increased by
 
 * `attack out cliff`
 * `smash holder`
@@ -259,7 +259,7 @@ This personality must taunt a lot. Dunking, charging regular/smash attacks, and 
 * `charger`
 * `appeal`
 
-#### Decreases
+#### Decreased by
 
 * `100 keeper`
 * `item throw to target`
@@ -280,13 +280,13 @@ This personlity must not parry. The amiibo should stay on the ground and use its
 
 * `shield master` >= 0.26
 
-#### Increases
+#### Increased by
 
 * `grounded`
 * `feint master`
 * `feint shooter`
 
-#### Decreases
+#### Decreased by
 
 * `near`
 * `offensive`
@@ -315,13 +315,13 @@ This personlity must not parry. The amiibo should stay on the ground and use its
 
 #### Description
 
-This personality is quite different from the others. It has no specific attribute requirement. It's similar to `rsk` except it doesn't counter or parry. It should attack a lot, especially off stage. Charging attacks is good. Holding items is strongly encouraged. What's particularly unusual is it's discouraged from throwing, swinging, or shooting items. This personality will simply hold items and never use them.
+This personality is quite different from the others. It has no specific attribute requirement. It's similar to `rsk` except it doesn't counter or parry. It should attack a lot, especially off stage. Charging attacks is good. Holding items is strongly encouraged. What's particularly unusual is it's discouraged from throwing, swinging, or shooting items. This personality will simply hold items and never use them. 
 
 #### Must have
 
 (Nothing)
 
-#### Increases
+#### Increased by
 
 * `offensive`
 * `attack out cliff`
@@ -341,7 +341,7 @@ This personality is quite different from the others. It has no specific attribut
 * `carrier broker`
 * `charger`
 
-#### Decreases
+#### Decreased by
 
 * `catcher`
 * `attack cancel`
