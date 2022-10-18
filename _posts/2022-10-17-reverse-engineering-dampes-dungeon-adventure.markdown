@@ -83,7 +83,7 @@ Nintendo Switch account names are limited to 10 characters. Seeing that a single
 
 The next data field is the best completion time. It is a four-byte integer (little endian) measured in centiseconds. Yes, centiseconds. The game never shows more than two decimal points. So there’s no need to use a more standard unit like milliseconds. This make the value more compact.
 
-Even though four bytes could store a larger value, the timer is capped at 59:59.99. I made a full 64-chamber dungeon. I was able to complete that labyrinth well under the hour limit.
+Even though four bytes could store a larger value, the timer is capped at 59:59.99. I made a full 64-chamber dungeon, including every boss and mini-boss. I was able to complete that labyrinth well under the hour limit.
 
 Note that you must first play through and beat a dungeon before you can save it to an amiibo. There will always be a completion time.
 
