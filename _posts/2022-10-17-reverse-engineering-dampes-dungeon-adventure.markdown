@@ -151,16 +151,18 @@ The challenges that don’t allow you a sword don’t actually change the equipm
 
 There’s no way to name a dungeon. Your dungeon will automatically be named “Shrine/Cave/Maze/Labyrinth of [Name]”. The name is determined by the number of chambers in the dungeon.
 
-Shrine 3-10
-Cave 11-20
-Maze 21-30
-Labyrinth 31-64
+| Classification | Number of Chambers |
+|:---|---:|
+| Shrine | 3-10 |
+| Cave | 11-20 |
+| Maze | 21-30 |
+| Labyrinth | 31-64 |
 
 No descriptions either. These are determined by the dungeon level. Only Dampé’s challenges have semi-meaningful descriptions.
 
 ## Resources
 
-For full details of the chambers, [check out the chamber catalog](https://www.icloud.com/numbers/0f0fVIs3UOVA_-RFASWRlPB_w#Link's_Awakening_Dungeon_Info). It almost certainly contains errors or missing details. There is a lot to note for 187 chambers.
+For full details of the chambers, [check out the chamber catalog](https://www.icloud.com/numbers/0f0fVIs3UOVA_-RFASWRlPB_w#Link's_Awakening_Dungeon_Catalog). It almost certainly contains errors or missing details. There is a lot to note for 187 chambers.
 
 I also used HexFiend for viewing the files. It has a feature to use TCL scripts to parse out binary data. I've included my script below. Note that the amiibo data must first be derypted for this binary template script to be useful.
 
