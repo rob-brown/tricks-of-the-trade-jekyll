@@ -7,7 +7,7 @@ categories: amiibo
 ---
 ## Intro
 
-Dampé’s Dungeon Adventure is my favorite feature in the Link’s Awakening remake. Since the dungeons can be stored on an amiibo figurine, the data is available to be easily read from it. I’ve been meaning to decode that data. Now three years later I finally got to it. It took about a week to decode the data for this post. Most of that time was cataloging the 187 available chambers.
+Dampé’s Dungeon Adventure is my favorite feature in the Link’s Awakening remake. Since the dungeons can be stored on an amiibo figurine, the data is available to be easily read from it. I’ve been meaning to decode that data. Now three years later I finally got to it. It took about a week to decode the data for this post. Most of that time was [cataloging the 187 available chambers](https://www.icloud.com/numbers/0f0fVIs3UOVA_-RFASWRlPB_w#Link's_Awakening_Dungeon_Catalog).
 
 ## Dungeon Data
 
@@ -15,7 +15,7 @@ Like all games that store data to an amiibo, the game has 216 bytes to store dat
 
 ### Basic Info
 
-The first four bytes are in the following format: `03XX0100`. Three of the four bytes appear to always be the same. The `XX` portion changes depending on the challenge chosen. Dampé has 24 challenges numbered 0x0 to 0x17. There’s also a free-play mode which has the value 0x30. So, must dungeons you see on amiibo will probably start with `0x03300100`.
+The first four bytes are in the following format: `03XX0100`. Three of the four bytes appear to always be the same. The `XX` portion changes depending on the challenge chosen. Dampé has 24 challenges numbered 0x00 to 0x17. There’s also a free-play mode which has the value 0x30. So, must dungeons you see on amiibo will probably start with `0x03300100`.
 
 The tutorial levels are mostly the same as the free-play mode. The main difference is that they may have some extra restrictions: no sword, limited hearts, or limited time. There are also chamber placement restrictions. Some chambers are placed by Dampé. In the chamber data, these locked chambers are indicated by a `0x0000` chamber value (more on this in a moment).
 
@@ -31,7 +31,7 @@ There are 4 hex digits. We’ll ignore the first digit for now. The latter three
 
 The dungeons are numbered 0x0 to 0xA. If you look at the catalog of chambers, you’ll notice dungeon 0x8 is not used. That is the Wind Fish’s egg. There are no chambers from that dungeon.
 
-Now for a brief history lesson. The original release of Link’s Awakening had the Wind Fish’s Egg as the final dungeon. In Link’s Awakening DX (released on Game Boy *Color*, there was a new dungeon released: the *Color Dungeon*. This is dungeon 0x9.
+Now for a brief history lesson. The original release of Link’s Awakening had the Wind Fish’s Egg as the final dungeon. In Link’s Awakening DX (released on Game Boy **Color**, there was a new dungeon released: the **Color Dungeon**. This is dungeon 0x9.
 
 But wait, I said it goes to 0xA. What about that? Dungeon 0xA isn’t a dungeon. It’s a grab bag of extra chambers. They are mostly some mini-bosses from the mini-dungeons.
 
@@ -49,7 +49,7 @@ Doing the same for the Eagle’s Tower:
 
 <img height="200" src="/assets/img/eagles-tower.jpg"/>
 
-There’s an interesting thing to note about the Eagle’s Tower. The fourth floor is unreachable. You have to collapse the fourth floor into the third floor in order to reach it. In reality, you are probably traveling to and from the third and fourth floors. Internally, the game is probably re-mapping the stairs after you break the pillars. It’s a similar trick to how the multiple floors works in the first place to make a three-dimensional dungeon into a two-dimensional dungeon (which is really just a one-dimensional list of chambers anyway).
+There’s an interesting thing to note about the Eagle’s Tower. The fourth floor is unreachable. You have to collapse the fourth floor into the third floor in order to reach it. In reality, you are probably traveling to and from the third and fourth floors. Internally, the game is probably re-mapping the stairs and doors after you break the pillars. It’s a similar trick to how the multiple floors works in the first place to make a three-dimensional dungeon into a two-dimensional dungeon (which is really just a one-dimensional list of chambers anyway).
 
 The keen eye will notice these two dungeons still fit into an 8x8 grid. This means you could logically create a multi-floor dungeon yourself even though Dampé’s map will show it as a single floor.
 
@@ -86,6 +86,8 @@ The next data field is the best completion time. It is a four-byte integer (litt
 Even though four bytes could store a larger value, the timer is capped at 59:59.99. I made a full 64-chamber dungeon. I was able to complete that labyrinth well under the hour limit.
 
 Note that you must first play through and beat a dungeon before you can save it to an amiibo. There will always be a completion time.
+
+<img height="400" src="/assets/img/labyrinth.png"/>
 
 ### Equipment
 
