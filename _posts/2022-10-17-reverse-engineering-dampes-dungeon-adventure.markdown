@@ -87,7 +87,7 @@ Even though four bytes could store a larger value, the timer is capped at 59:59.
 
 Note that you must first play through and beat a dungeon before you can save it to an amiibo. There will always be a completion time.
 
-<img height="400" src="/assets/img/labyrinth.png"/>
+<img width="95%" src="/assets/img/labyrinth.png"/>
 
 ### Equipment
 
