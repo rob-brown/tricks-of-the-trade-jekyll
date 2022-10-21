@@ -11,29 +11,29 @@ Dampé’s Dungeon Adventure is my favorite feature in the Link’s Awakening re
 
 ## Dungeon Data
 
-Like all games that store data to an amiibo, the game has 216 bytes to store data. Link’s Awakening more or less uses that full space. I will go through each of the significant portions of that data. My explanations will use hexadecimal format, meaning that values are base 16 using 0-9 and A-F.
+Like all games that store data to an amiibo, the game has 216 bytes available. Link’s Awakening more or less uses that full space. I will go through each of the significant portions of that data. My explanations will use hexadecimal format, meaning that values are base 16 using 0-9 and A-F.
 
 ### Basic Info
 
-The first four bytes are in the following format: `03XX0100`. Three of the four bytes appear to always be the same. The `XX` portion changes depending on the challenge chosen. Dampé has 24 challenges numbered 0x00 to 0x17. There’s also a free-play mode which has the value 0x30. So, must dungeons you see on amiibo will probably start with `0x03300100`.
+The first four bytes are in the following format: `0x03XX0100`. Three of the four bytes appear to always be the same. The `XX` portion changes depending on the challenge chosen. Dampé has 24 challenges numbered `0x00` to `0x17`. There’s also a free-play mode which has the value `0x30`. So, must dungeons you see on amiibo will probably start with `0x03300100`.
 
 The tutorial levels are mostly the same as the free-play mode. The main difference is that they may have some extra restrictions: no sword, limited hearts, or limited time. There are also chamber placement restrictions. Some chambers are placed by Dampé. In the chamber data, these locked chambers are indicated by a `0x0000` chamber value (more on this in a moment).
 
-The next four bytes are a mystery. I haven’t decoded them yet. They remain constant for a dungeon arrangement. Changing the dungeon changes these bytes. It could be related to how stairs connect. Though it’s non-zero when no stairs are present. More research required.
+The next four bytes are a mystery. I haven’t decoded them yet. They remain constant for a dungeon arrangement. Changing the dungeon changes these bytes, even if the same chamber is placed in the same spot. It seems like a random ID or perhaps a salt to make cryptanalysis on the tamper protection harder. Any time these bytes change, the dungeon must be played through to save it to an amiibo.
 
 ### Chamber Data
 
 The next 128 bytes are the most interesting. This is the chamber data. A dungeon is an 8x8 grid (up to 64 chambers). Each chamber gets two bytes. The chambers are stored in row-major format, meaning all of the first row is stored. After that is the second row and so on.
 
-Looking at the raw data, a chamber will look like this: `0x6201`. The data is stored in little-endian format. Basically that means the least-significant bit is stored first. This can be more efficient for computers to work with but the bytes are backwards from how we would normally read them. So, let’s flip it around: `0x0162`.
+Looking at the raw data, a chamber will look like this: `0x6201`. The data is stored in little-endian format. Basically that means the least-significant byte is stored first. This can be more efficient for computers to work with but the bytes are backwards from how we would normally read them. So, let’s flip it around: `0x0162`.
 
 There are 4 hex digits. We’ll ignore the first digit for now. The latter three are the important bits that determine the room. In short, these three digits represent coordinates: dungeon, y-coordinate, and x-coordinate.
 
-The dungeons are numbered 0x0 to 0xA. If you look at the catalog of chambers, you’ll notice dungeon 0x8 is not used. That is the Wind Fish’s egg. There are no chambers from that dungeon.
+The dungeons are numbered `0x0` to `0xA`. If you look at the catalog of chambers, you’ll notice dungeon `0x8` is not used. That is the Wind Fish’s egg. There are no chambers from that dungeon.
 
-Now for a brief history lesson. The original release of Link’s Awakening had the Wind Fish’s Egg as the final dungeon. In Link’s Awakening DX (released on Game Boy **Color**, there was a new dungeon released: the **Color Dungeon**. This is dungeon 0x9.
+Now for a brief history lesson. The original release of Link’s Awakening had the Wind Fish’s Egg as the final dungeon. In Link’s Awakening DX (released on Game Boy **Color**, there was a new dungeon released: the **Color Dungeon**. This is dungeon `0x9`. It is optional, though you can play through it fairly early in the game if you know where it is.
 
-But wait, I said it goes to 0xA. What about that? Dungeon 0xA isn’t a dungeon. It’s a grab bag of extra chambers. They are mostly some mini-bosses from the mini-dungeons.
+But wait, I said it goes to `0xA`. What about that? Dungeon `0xA` isn’t a dungeon. It’s a grab bag of extra chambers. They are mostly some mini-bosses from the mini-dungeons.
 
 Now for the x-y coordinates. You’ll notice that the y-coordinate comes first though we typically use the x-coordinate first. Remember the chambers are stored in row-major order. The y-coordinate determines the row. Then the x-coordinate picks the chamber within that row.
 
@@ -162,10 +162,36 @@ There’s no way to name a dungeon. Your dungeon will automatically be named “
 
 No descriptions either. These are determined by the dungeon level. Only Dampé’s challenges have semi-meaningful descriptions.
 
+There is no creation date (for dungeons you've made) or received date (for chambers you've received via amiibo). Both of those are stored in the game itself.
+
+How stairs are connected are not in the data. Instead, they recalculated each time a chamber is placed. The stairs are shown in one of the four corners of the tile. The game then calculates the distance between every pair of stairs. It then sorts them by distance (ascending). When distance is equal, it sorts by row (ascending). When row is equal, it sorts by column (ascending). It then runs through the list and pairs up the stairs. Since it uses a greedy algorithm you can fabricate where all the stairs are close together but one or more pairings are far apart. This would not be a good algorithm to minimize digging tunnels. Though it can be used to draw a happy little tree.
+
+<img width="95%" src="/assets/img/dungeon-stairs1.png"/>
+
+<img width="95%" src="/assets/img/dungeon-stairs2.png"/>
+
+<img width="95%" src="/assets/img/dungeon-stairs3.png"/>
+
+The UI has seven distinct colors assigned in this order:
+
+1. Green
+2. Cyan
+3. Magenta
+4. Red
+5. Yellow
+6. Blue
+7. Orange
+
+Knowing that order, you can follow along with the screenshots above to confirm the algorithm works as described.
+
 ## Resources
 
 For full details of the chambers, [check out the chamber catalog](https://www.icloud.com/numbers/0f0fVIs3UOVA_-RFASWRlPB_w#Link's_Awakening_Dungeon_Catalog). It almost certainly contains errors or missing details. There is a lot to note for 187 chambers.
 
-I also used HexFiend for viewing the files. It has a feature to use TCL scripts to parse out binary data. I've included my script below. Note that the amiibo data must first be derypted for this binary template script to be useful.
+I also used HexFiend for viewing the files. It has a feature to use TCL scripts to parse out binary data. I've included my script below. Note that the amiibo data must first be decrypted for this binary template script to be useful.
 
 <script src="https://gist.github.com/rob-brown/fbff18427994325aeadd32af3afdc11c.js"></script>
+
+## Updates
+
+20 Oct 2022: Added details about the stair-pairing algorithm.
