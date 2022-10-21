@@ -177,8 +177,8 @@ The UI has seven distinct colors assigned in this order:
 1. Green
 2. Cyan
 3. Magenta
-4. Red
-5. Yellow
+4. Yellow
+5. Red
 6. Blue
 7. Orange
 
