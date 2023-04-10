@@ -6,9 +6,13 @@ date:   2022-05-01 07:02:00 -0600
 categories: amiibo
 permalink: /posts/amiibo-personality-analysis
 ---
+## Update
+
+**8 April 2023**: I had ported the personality calculation to Elixir. However, it was a direct port. I've now [rewritten the Elixir code](https://gist.github.com/rob-brown/d2cfaa843c4e65cfcb85c37dd0a8bebb) to be more readable. I also converted the JSON data to TOML and included excerpts of this post in it. Many fields were renamed to clarify their intent. The code generator to convert the TOML file into Elixir code has been omitted to focus on the core algorithm. 
+
 ## Summary
 
-A while back, Ske reverse-engineered the SSBU amiibo personality calculation. The calculation is fairly complicated and this article will explain it to a level others can understand.
+A while back, [Ske](https://github.com/xSke) reverse-engineered the SSBU amiibo [personality calculation](https://gist.github.com/xSke/979dabd395c39eff36bcaccf87d66a3e). The calculation is fairly complicated and this article will explain it to a level others can understand.
 
 ## Personality Calculation
 
@@ -315,7 +319,7 @@ This personlity must not parry. The amiibo should stay on the ground and use its
 
 #### Description
 
-This personality is quite different from the others. It has no specific attribute requirement. It's similar to `rsk` except it doesn't counter or parry. It should attack a lot, especially off stage. Charging attacks is good. Holding items is strongly encouraged. What's particularly unusual is it's discouraged from throwing, swinging, or shooting items. This personality will simply hold items and never use them. 
+This personality is quite different from the others. It has no specific attribute requirement. It's similar to `rsk` except it doesn't counter or parry. It should attack a lot, especially off stage. Charging attacks is good. Holding items is strongly encouraged. What's particularly unusual is it's discouraged from throwing, swinging, or shooting items. This personality will simply hold items and never use them, except some of the risky weapons. 
 
 #### Must have
 
