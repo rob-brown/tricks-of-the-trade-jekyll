@@ -25,7 +25,7 @@ The next four bytes are a mystery. I haven’t decoded them yet. They remain con
 
 The next 128 bytes are the most interesting. This is the chamber data. A dungeon is an 8x8 grid (up to 64 chambers). Each chamber gets two bytes. The chambers are stored in row-major format, meaning all of the first row is stored. After that is the second row and so on.
 
-Looking at the raw data, a chamber will look like this: `0x6201`. The data is stored in little-endian format. Basically that means the least-significant byte is stored first. This can be more efficient for computers to work with but the bytes are backwards from how we would normally read them. So, let’s flip it around: `0x0162`.
+Looking at the raw data, a chamber will look like this: `0x6201`. Cells without a chamber are always `0xFFFF`. The data is stored in little-endian format. Basically that means the least-significant byte is stored first. This can be more efficient for computers to work with but the bytes are backwards from how we would normally read them. So, let’s flip it around: `0x0162`.
 
 There are 4 hex digits. We’ll ignore the first digit for now. The latter three are the important bits that determine the room. In short, these three digits represent coordinates: dungeon, y-coordinate, and x-coordinate.
 
