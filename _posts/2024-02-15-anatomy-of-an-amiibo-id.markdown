@@ -2,7 +2,7 @@
 layout: post
 title:  Anatomy of an amiibo ID
 author: Robert Brown
-date:   2022-02-15 18:51:00 -0600
+date:   2024-02-15 18:51:00 -0600
 categories: amiibo
 ---
 ## Intro
