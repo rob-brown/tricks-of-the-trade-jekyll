@@ -157,7 +157,7 @@ These are the current series:
 | `07` | Skylanders |
 | `09` | Legend Of Zelda |
 | `0A` | Shovel Knight |
-| `0B` | --- |
+| `0B` | ... |
 | `0C` | Kirby |
 | `0D` | Pokemon |
 | `0E` | Mario Sports Superstars |
@@ -172,9 +172,9 @@ These are the current series:
 | `17` | Power Pros |
 | `18` | Monster Hunter |
 | `19` | Yu-Gi-Oh! |
-| `1A` | --- |
+| `1A` | ... |
 | `1B` | Xenoblade Chronicles |
-| --- | --- |
+| ... | ... |
 | `FF` | Super Nintendo World |
 
 ## Format Version
@@ -214,22 +214,22 @@ I'll start by dumping a large table of data then explain what it means.
 | 078 | Classic Nintendo | Nintendo |
 | 07C | Mii | Nintendo |
 | 080 | Splatoon | Nintendo |
-| --- | --- |
+| ... | ... |
 | 09C-09D | Mario Sports Superstars | Nintendo |
-| --- | --- |
+| ... | ... |
 | 0A4 | ARMS | Nintendo |
-| --- | --- |
+| ... | ... |
 | 190-1D4 | Pokémon | Nintendo/GameFreak |
-| --- | --- |
+| ... | ... |
 | 1F0 | Kirby | Nintendo/HAL Labs |
 | 1F4 | BoxBoy | Nintendo/HAL Labs
-| --- | --- |
+| ... | ... |
 | 210 | Fire Emblem | Nintendo |
-| --- | --- |
+| ... | ... |
 | 224 | Xenoblade | Nintendo/Monolith Soft |
 | 228 | Earthbound | Nintendo |
 | 22C | Chibi Robo | Nintendo |
-| --- | --- |
+| ... | ... |
 | 320 | Sonic | Sega |
 | 324 | Bayonetta | Sega/Platinum Games |
 | 328 | x |
