@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Anatomy of an amiibo ID | Tricks of the Trade</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Anatomy of an amiibo ID" />
+<meta name="author" content="Robert Brown" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Intro" />
+<meta property="og:description" content="Intro" />
+<link rel="canonical" href="/amiibo/2024/02/16/anatomy-of-an-amiibo-id.html" />
+<meta property="og:url" content="/amiibo/2024/02/16/anatomy-of-an-amiibo-id.html" />
+<meta property="og:site_name" content="Tricks of the Trade" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-02-16T00:51:00+00:00" />
+<script type="application/ld+json">
+{"datePublished":"2024-02-16T00:51:00+00:00","author":{"@type":"Person","name":"Robert Brown"},"dateModified":"2024-02-16T00:51:00+00:00","description":"Intro","url":"/amiibo/2024/02/16/anatomy-of-an-amiibo-id.html","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"/amiibo/2024/02/16/anatomy-of-an-amiibo-id.html"},"headline":"Anatomy of an amiibo ID","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Tricks of the Trade" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Tricks of the Trade</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about">About</a><a class="page-link" href="/hire-me">Hire Me</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Anatomy of an amiibo ID</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2024-02-16T00:51:00+00:00" itemprop="datePublished">Feb 16, 2024
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Robert Brown</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h2 id="intro">Intro</h2>
+
+<p>You may have heard about data miners finding game details and releasing them before the game is ready. One such thing is amiibo IDs.
+However, I’ve been guessing amiibo IDs long before data miners even found them. Often times a game has amiibo support added before
+the amiibo is released. Guessing the IDs is fun for unlocking new items and behavior before the amiibo figure is available.</p>
+
+<p>With the release of Sora for Super Smash Bros. Ultimate, I’m going to reveal how I’ve been guessing the amiibo IDs. Once Nintendo
+finds this article, future IDs may be less guessable. Though this is a fun exercise in reverse engineering and knowing the
+process is enlightening.</p>
+
+<h2 id="disclaimers">DISCLAIMERS</h2>
+
+<p>The bulk of the data for this article came from <a href="https://github.com/N3evin/AmiiboAPI">AmiiboAPI</a> with the rest coming from my own research.</p>
+
+<p>I do not condone cloning amiibo and selling them as your own. Even though I unlock features early, I subsequently buy amiibo once
+they do become available.</p>
+
+<h2 id="structure">Structure</h2>
+
+<p>The structure of amiibo IDs has been known for a long time. Here’s the ID for Zelda and Loftwing released with the remaster of
+The Legend of Zelda: Skyward Sword.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>01010300 04140902
+</code></pre></div></div>
+
+<p>That’s the ID represented in <a href="https://en.wikipedia.org/wiki/Hexadecimal">hexadecimal</a> form. Here are the parts broken out:</p>
+
+<p><code class="language-plaintext highlighter-rouge">010</code>: Game series = The Legend of Zelda</p>
+
+<p><code class="language-plaintext highlighter-rouge">1</code>: Character = Zelda</p>
+
+<p><code class="language-plaintext highlighter-rouge">03</code>: Variation = Zelda with Loftwing</p>
+
+<p><code class="language-plaintext highlighter-rouge">00</code>: Form = Figure</p>
+
+<p><code class="language-plaintext highlighter-rouge">0414</code>: Serial number = 414 hexadecimal 1044 decimal</p>
+
+<p><code class="language-plaintext highlighter-rouge">09</code>: amiibo series = The Legend of Zelda</p>
+
+<p><code class="language-plaintext highlighter-rouge">02</code>: Format version = 2</p>
+
+<p>The first three bytes (<code class="language-plaintext highlighter-rouge">010103</code>) contain the key information for the character. The remaining five bytes (<code class="language-plaintext highlighter-rouge">0004140902</code>) contains metadata.
+Most games only look at the first two or three bytes. This allows them to be compatible with future amiibo without updating the game.</p>
+
+<p>The rest of this post will dive into the details of each portion.</p>
+
+<h2 id="game-series">Game Series</h2>
+
+<p>Not to be confused with the “amiibo Series”. The game series represents where the character originated from, ex. Link -&gt; The Legend
+of Zelda. For game series with many amiibo, there will be multiple game series IDs assigned. How this portion of the ID is more elusive
+and will be covered in detail later in the article.</p>
+
+<h2 id="character-and-variation">Character and Variation</h2>
+
+<p>The character is the most important information in the amiibo ID. This is often the only information a game is concerned about.</p>
+
+<p>For a single game series ID, there are 15 possible amiibo. Some series have much more than that. So when it exceeds 15, it add a new
+game series ID. The subsequent series ID is usually sequential. However, The Legend of Zelda series uses <code class="language-plaintext highlighter-rouge">010</code> but some Breath of
+the Wild figures use <code class="language-plaintext highlighter-rouge">014</code>.</p>
+
+<p>Speaking of The Legend of Zelda, here are some characters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">0</code> Link</li>
+  <li><code class="language-plaintext highlighter-rouge">1</code> Zelda</li>
+  <li><code class="language-plaintext highlighter-rouge">2</code> Ganondorf</li>
+  <li><code class="language-plaintext highlighter-rouge">3</code> Midna and Wolf Link</li>
+  <li><code class="language-plaintext highlighter-rouge">4</code> Daruk</li>
+  <li><code class="language-plaintext highlighter-rouge">5</code> Urbosa</li>
+  <li><code class="language-plaintext highlighter-rouge">6</code> Mipha</li>
+  <li><code class="language-plaintext highlighter-rouge">7</code> Revali</li>
+</ul>
+
+<p>You might be thinking, where is the Sheik amiibo? This is where variation comes in. Zelda is variation <code class="language-plaintext highlighter-rouge">00</code>. Sheik is variation <code class="language-plaintext highlighter-rouge">01</code>
+(25 year-old spoiler…Sheik is Zelda).</p>
+
+<p>The variation is used to distinguish the “Player 2” figures. Specifically the Super Smash Bros. Cloud, Corrin, and Bayonetta figurines.</p>
+
+<p>The variation has also been used to distinguish game-specific amiibo. For example, Zelda &amp; Loftwing, Cat Peach, and Cat Mario are
+different variations from their base character. Scanning these amiibo into their respective games gave different rewards than
+scanning other variants.</p>
+
+<p>The use of variants is not consistent. For example, shortly after the Skyward Sword and Super Mario 3D world remasters release came
+Metroid Dread. The Metroid Dread Samus amiibo gives different rewards than other Samus amiibo but it’s not a variant. This means that
+Metroid Dread must look at the full amiibo ID to distinguish this amiibo.</p>
+
+<p>To further confuse matters, Toon Link is a variant of Link. However, there is no Young Link variant. Super Smash Bros. Ultimate
+treats “Link” and “Young Link” as different characters. So, the game must look at the full ID. This means if there is a new
+“Young Link” amiibo released, it will be treated as Link unless the game is updated.</p>
+
+<p>Whoever made the Skylander amiibo completely ignored the variation and serial number. Hammer Slam Bowser and Dark Hammer Slam Bowser
+share the same ID. Same for Turbo Charge Donkey Kong and Dark Turbo Charge Donkey Kong.</p>
+
+<p>Currently, the character with the most variations is Isabelle from Animal Crossing. She has three figures and seven cards wearing
+the following six outfits.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">00</code> Summer</li>
+  <li><code class="language-plaintext highlighter-rouge">01</code> Winter</li>
+  <li><code class="language-plaintext highlighter-rouge">02</code> Kimono</li>
+  <li><code class="language-plaintext highlighter-rouge">03</code> Dress</li>
+  <li><code class="language-plaintext highlighter-rouge">04</code> Tropical</li>
+  <li><code class="language-plaintext highlighter-rouge">05</code> Sweater</li>
+</ul>
+
+<h3 id="character-id">Character ID</h3>
+
+<p>Though I treat game series, character, and variation as three different things they really get mashed into one thing: the character
+ID. Let’s take character ID for Pikachu: <code class="language-plaintext highlighter-rouge">191900</code>. It can be helpful to think of the game series having four digits, in this case
+<code class="language-plaintext highlighter-rouge">1900</code>. Then the character number is 19 hexadecimal or 25 decimal. Adding <code class="language-plaintext highlighter-rouge">1900</code> and <code class="language-plaintext highlighter-rouge">19</code> gives the base ID <code class="language-plaintext highlighter-rouge">1919</code>. Append the
+variation <code class="language-plaintext highlighter-rouge">00</code> to get the full character ID of <code class="language-plaintext highlighter-rouge">191900</code>.</p>
+
+<h2 id="form">Form</h2>
+
+<p>The form determines their physical representation. The options are few but Nintendo occassionally surprises us with new forms.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">00</code> Figure</li>
+  <li><code class="language-plaintext highlighter-rouge">01</code> Card</li>
+  <li><code class="language-plaintext highlighter-rouge">02</code> Yarn</li>
+  <li><code class="language-plaintext highlighter-rouge">03</code> Band</li>
+</ul>
+
+<p>You’ve likely seen the figures. They are the most common. You may have also seen cards such as the many Animal Crossing cards.</p>
+
+<p>The other types are less common. With the Yoshi series came several figures crocheted from yarn. This is a reference to Yoshi’s
+Wooly World where Yoshi and others are made of yarn.</p>
+
+<p>The newest form are wrist bands. You receive these at the Super Nintendo World theme parks. This is a clever way to introduce more
+people to the amiibo functionality within games.</p>
+
+<h2 id="serial-number">Serial Number</h2>
+
+<p>By itself, the serial number is mundane. It’s simply a sequentially-assigned number. What’s more interesting is in what’s missing.
+There are several gaps. These gaps could indicate canceled amiibo. Or some card series carved out more numbers than needed.
+More on this below.</p>
+
+<h2 id="amiibo-series">amiibo Series</h2>
+
+<p>Not to be confused with the “Game Series”. For amiibo figures, this determines the base the figure stands on. Each base has a
+slightly different design. The most notable difference between game series and amiibo series is the Super Smash Bros. series.
+It contains characters from a variety of games, ex. Legend of Zelda, Mega Man, Pikmin, Metroid.</p>
+
+<p>These are the current series:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">amiibo Series ID</th>
+      <th style="text-align: left">Series Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">00</code></td>
+      <td style="text-align: left">Super Smash Bros.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">01</code></td>
+      <td style="text-align: left">Super Mario</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">02</code></td>
+      <td style="text-align: left">Chibi-Robo!</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">03</code></td>
+      <td style="text-align: left">Yoshi</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">04</code></td>
+      <td style="text-align: left">Splatoon</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">05</code></td>
+      <td style="text-align: left">Animal Crossing</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">06</code></td>
+      <td style="text-align: left">8-bit Mario</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">07</code></td>
+      <td style="text-align: left">Skylanders</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">09</code></td>
+      <td style="text-align: left">Legend Of Zelda</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0A</code></td>
+      <td style="text-align: left">Shovel Knight</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0B</code></td>
+      <td style="text-align: left">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0C</code></td>
+      <td style="text-align: left">Kirby</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0D</code></td>
+      <td style="text-align: left">Pokemon</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0E</code></td>
+      <td style="text-align: left">Mario Sports Superstars</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0F</code></td>
+      <td style="text-align: left">Monster Hunter</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">10</code></td>
+      <td style="text-align: left">BoxBoy!</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">11</code></td>
+      <td style="text-align: left">Pikmin</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">12</code></td>
+      <td style="text-align: left">Fire Emblem</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">13</code></td>
+      <td style="text-align: left">Metroid</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">14</code></td>
+      <td style="text-align: left">Others</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">15</code></td>
+      <td style="text-align: left">Mega Man</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">16</code></td>
+      <td style="text-align: left">Diablo</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">17</code></td>
+      <td style="text-align: left">Power Pros</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">18</code></td>
+      <td style="text-align: left">Monster Hunter</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">19</code></td>
+      <td style="text-align: left">Yu-Gi-Oh!</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">1A</code></td>
+      <td style="text-align: left">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">1B</code></td>
+      <td style="text-align: left">Xenoblade Chronicles</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">…</td>
+      <td style="text-align: left">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">FF</code></td>
+      <td style="text-align: left">Super Nintendo World</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="format-version">Format Version</h2>
+
+<p>The final byte is the “format version”. So far it’s always <code class="language-plaintext highlighter-rouge">02</code>. If a new format is ever made, then this number could be
+different. It’s not likely, so just expect this to always be <code class="language-plaintext highlighter-rouge">02</code>.</p>
+
+<h2 id="game-series-assignment">Game Series Assignment</h2>
+
+<p>Now to dig into the most critical data, the game series. For existing series, it’s trivial to look up the game series ID. But
+for new games, how can you guess the series ID?</p>
+
+<p>The game series numbers are arbitrarily assigned. Fortunately, people (especially programmers) like organization. I’ve
+deduced some patterns through what I call “playing solitaire with the data”. Basically categorizing data and finding
+similarities.</p>
+
+<p>I’ll start by dumping a large table of data then explain what it means.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: right">Series ID</th>
+      <th style="text-align: left">Name</th>
+      <th style="text-align: left">Publisher/Developer</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right">000-002</td>
+      <td style="text-align: left">Super Mario Bros.</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">004</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">008</td>
+      <td style="text-align: left">Yoshi</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">00C</td>
+      <td style="text-align: left">Donky Kong</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">010</td>
+      <td style="text-align: left">Legend of Zelda</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">014</td>
+      <td style="text-align: left">Breath of the Wild</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">018-051</td>
+      <td style="text-align: left">Animal Crossing</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">054</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">058</td>
+      <td style="text-align: left">Star Fox</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">05C</td>
+      <td style="text-align: left">Metroid</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">060</td>
+      <td style="text-align: left">F-Zero</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">064</td>
+      <td style="text-align: left">Pikmin</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">068</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">06C</td>
+      <td style="text-align: left">Punch Out</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">070</td>
+      <td style="text-align: left">Wii Fit</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">074</td>
+      <td style="text-align: left">Kid Icarus</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">078</td>
+      <td style="text-align: left">Classic Nintendo</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">07C</td>
+      <td style="text-align: left">Mii</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">080</td>
+      <td style="text-align: left">Splatoon</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">…</td>
+      <td style="text-align: left">…</td>
+      <td style="text-align: left">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">09C-09D</td>
+      <td style="text-align: left">Mario Sports Superstars</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">…</td>
+      <td style="text-align: left">…</td>
+      <td style="text-align: left">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">0A4</td>
+      <td style="text-align: left">ARMS</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">…</td>
+      <td style="text-align: left">…</td>
+      <td style="text-align: left">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">190-1D4</td>
+      <td style="text-align: left">Pokémon</td>
+      <td style="text-align: left">Nintendo/GameFreak</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">…</td>
+      <td style="text-align: left">…</td>
+      <td style="text-align: left">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">1F0</td>
+      <td style="text-align: left">Kirby</td>
+      <td style="text-align: left">Nintendo/HAL Labs</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">1F4</td>
+      <td style="text-align: left">BoxBoy</td>
+      <td style="text-align: left">Nintendo/HAL Labs</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">…</td>
+      <td style="text-align: left">…</td>
+      <td style="text-align: left">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">210</td>
+      <td style="text-align: left">Fire Emblem</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">…</td>
+      <td style="text-align: left">…</td>
+      <td style="text-align: left">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">224</td>
+      <td style="text-align: left">Xenoblade</td>
+      <td style="text-align: left">Nintendo/Monolith Soft</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">228</td>
+      <td style="text-align: left">Earthbound</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">22C</td>
+      <td style="text-align: left">Chibi Robo</td>
+      <td style="text-align: left">Nintendo</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">…</td>
+      <td style="text-align: left">…</td>
+      <td style="text-align: left">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">320</td>
+      <td style="text-align: left">Sonic</td>
+      <td style="text-align: left">Sega</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">324</td>
+      <td style="text-align: left">Bayonetta</td>
+      <td style="text-align: left">Sega/Platinum Games</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">328</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">32C</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">330</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">334</td>
+      <td style="text-align: left">Pac-Man</td>
+      <td style="text-align: left">Bandai Namco</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">338</td>
+      <td style="text-align: left">Dark Souls</td>
+      <td style="text-align: left">Bandai Nameco</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">33C</td>
+      <td style="text-align: left">Tekken</td>
+      <td style="text-align: left">Bandai Namco</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">340</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">344</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">348</td>
+      <td style="text-align: left">Mega Man</td>
+      <td style="text-align: left">Capcom</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">34C</td>
+      <td style="text-align: left">Street Fighter</td>
+      <td style="text-align: left">Capcom</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">350</td>
+      <td style="text-align: left">Monster Hunter</td>
+      <td style="text-align: left">Capcom</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">354</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">358</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">35C</td>
+      <td style="text-align: left">Shovel Knight</td>
+      <td style="text-align: left">Yacht Club Games</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">360</td>
+      <td style="text-align: left">Final Fantasy</td>
+      <td style="text-align: left">Square Enix</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">364</td>
+      <td style="text-align: left">Dragon Quest</td>
+      <td style="text-align: left">Square Enix</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">368</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">36C</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">370</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">374</td>
+      <td style="text-align: left">Super Mario Cereal</td>
+      <td style="text-align: left">Kellogs</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">378</td>
+      <td style="text-align: left">Metal Gear Solid</td>
+      <td style="text-align: left">Konami</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">37C</td>
+      <td style="text-align: left">Castlevania</td>
+      <td style="text-align: left">Konami</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">380</td>
+      <td style="text-align: left">Jikkyou Powerful Pro Baseball</td>
+      <td style="text-align: left">Konami</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">384</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">388</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">38C</td>
+      <td style="text-align: left">Diablo</td>
+      <td style="text-align: left">Blizzard</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">390</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">394</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">398</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">39C</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3A0</td>
+      <td style="text-align: left">Persona</td>
+      <td style="text-align: left">Atlus/Sega</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3A4</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3A8</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3AC</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3B0</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3B4</td>
+      <td style="text-align: left">Banjo and Kazooie</td>
+      <td style="text-align: left">Rare/Microsoft</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3B8</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3BC</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3C0</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3C4</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3C8</td>
+      <td style="text-align: left">Fatal Fury</td>
+      <td style="text-align: left">SNK</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3CC</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3D0</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3D4</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3D8</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3DC</td>
+      <td style="text-align: left">Minecraft</td>
+      <td style="text-align: left">Mojang/Microsoft</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3E0</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3E4</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3E8</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3EC</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3F0</td>
+      <td style="text-align: left">Kingdom Hearts</td>
+      <td style="text-align: left">Disney/Square Enix</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3F4</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3F8</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3FC</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: right">400</td>
+      <td style="text-align: left">x</td>
+      <td style="text-align: left"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The series IDs <code class="language-plaintext highlighter-rouge">000</code>-<code class="language-plaintext highlighter-rouge">319</code> are reserved for Nintendo. They don’t appear to follow a distinct pattern. So I won’t say more about them.</p>
+
+<p><code class="language-plaintext highlighter-rouge">320</code> and beyond are for third-party developers. Notice that I set up the table so that each entry ends with <code class="language-plaintext highlighter-rouge">0</code>, <code class="language-plaintext highlighter-rouge">4</code>, <code class="language-plaintext highlighter-rouge">8</code>, or <code class="language-plaintext highlighter-rouge">C</code> (12 decimal).
+I call each entry a “slot”. One slot is can have 64 amiibo (ex. <code class="language-plaintext highlighter-rouge">3740</code>-<code class="language-plaintext highlighter-rouge">377F</code>) ignoring variants. Smaller publishers (ex. Yacht Club
+Games, maker of Shovel Knight) are assigned a single slot. Larger publishers that make multiple games are given five slots. This is
+enough for 320 amiibo (ignoring variants) across five game series.</p>
+
+<p>The latest amiibo, Sora from Kingdom Hearts, was assigned series ID <code class="language-plaintext highlighter-rouge">3F0</code>. Following this pattern, if a new publisher released an amiibo,
+it’s series ID would be <code class="language-plaintext highlighter-rouge">404</code>.</p>
+
+<p>You might think this is a large waste of space slicing out five slots at a time. However, from <code class="language-plaintext highlighter-rouge">404</code> to <code class="language-plaintext highlighter-rouge">FFC</code> inclusive, there are 767 slots.
+That’s enough for 153 more major publishers. amiibo have been around for almost a decade. The numbers aren’t running out soon.</p>
+
+<h2 id="possible-cancelations">Possible Cancelations</h2>
+
+<p>The following tables show gaps in the serial numbers. There’s also some speculation about what might have used those numbers. At the time of
+writing, the latest serial number is <code class="language-plaintext highlighter-rouge">043E</code>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Range</th>
+      <th style="text-align: right">Size</th>
+      <th style="text-align: left">Speculation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">3B</code></td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: left">Possibly Chibi-Robo amiibo</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">1D9</code>—<code class="language-plaintext highlighter-rouge">237</code></td>
+      <td style="text-align: right">95</td>
+      <td style="text-align: left">Probably Animal Crossing cards, increase 405 to 500</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">23C</code></td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: left">Maybe another Skylander or Pokémon</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">2C3</code>—<code class="language-plaintext highlighter-rouge">2E0</code></td>
+      <td style="text-align: right">30</td>
+      <td style="text-align: left">Probably more Mario Sports Superstars, increase 90 to 120</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">31F</code>—<code class="language-plaintext highlighter-rouge">34A</code></td>
+      <td style="text-align: right">44</td>
+      <td style="text-align: left">Probably Animal Crossing cards, increase 56 to 100</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">351</code></td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: left">Probably a Toon LoZ amiibo (Ganondorf?)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">357</code></td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: left">Probably a BotW amiibo (Calamity Ganon?)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">39A</code></td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: left">Probably a Link’s Awakening amiibo (Marin?)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">3D8</code>—<code class="language-plaintext highlighter-rouge">40B</code></td>
+      <td style="text-align: right">52</td>
+      <td style="text-align: left">Probably Animal Crossing cards, increase 48 to 100</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">416</code>—<code class="language-plaintext highlighter-rouge">417</code></td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: left">Possibly Splatoon 3 or Tears of the Kingdom</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">42F</code></td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: left">More Power-Up bands? (Link?)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">431</code>—<code class="language-plaintext highlighter-rouge">432</code></td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: left">More Power-Up bands? (Donkey Kong? Diddy Kong?)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">436</code>—<code class="language-plaintext highlighter-rouge">43C</code></td>
+      <td style="text-align: right">7</td>
+      <td style="text-align: left">Maybe Splatoon 3 or Xenoblade but probably not</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>For just being eight bytes of data, there is a lot that can be inferred. It’s similar to how the
+<a href="https://en.wikipedia.org/wiki/Periodic_table#History">periodic table of elements came about</a>. Or the
+<a href="https://en.wikipedia.org/wiki/German_tank_problem">German tank problem</a>.
+Next time you see a mess of data, see if you can tease out those little patterns.</p>
+
+  </div><a class="u-url" href="/amiibo/2024/02/16/anatomy-of-an-amiibo-id.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Tricks of the Trade</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Tricks of the Trade</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/rob-brown"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">rob-brown</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Writing about best development practices and other topics.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Amiibo Personality Analysis | Tricks of the Trade</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Amiibo Personality Analysis" />
+<meta name="author" content="Robert Brown" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Update" />
+<meta property="og:description" content="Update" />
+<link rel="canonical" href="/posts/amiibo-personality-analysis" />
+<meta property="og:url" content="/posts/amiibo-personality-analysis" />
+<meta property="og:site_name" content="Tricks of the Trade" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-05-01T13:02:00+00:00" />
+<script type="application/ld+json">
+{"datePublished":"2022-05-01T13:02:00+00:00","author":{"@type":"Person","name":"Robert Brown"},"dateModified":"2022-05-01T13:02:00+00:00","description":"Update","url":"/posts/amiibo-personality-analysis","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"/posts/amiibo-personality-analysis"},"headline":"Amiibo Personality Analysis","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Tricks of the Trade" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Tricks of the Trade</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about">About</a><a class="page-link" href="/hire-me">Hire Me</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Amiibo Personality Analysis</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2022-05-01T13:02:00+00:00" itemprop="datePublished">May 1, 2022
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Robert Brown</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h2 id="update">Update</h2>
+
+<p><strong>8 April 2023</strong>: I had ported the personality calculation to Elixir. However, it was a direct port. I’ve now <a href="https://gist.github.com/rob-brown/d2cfaa843c4e65cfcb85c37dd0a8bebb">rewritten the Elixir code</a> to be more readable. I also converted the JSON data to TOML and included excerpts of this post in it. Many fields were renamed to clarify their intent. The code generator to convert the TOML file into Elixir code has been omitted to focus on the core algorithm.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>A while back, <a href="https://github.com/xSke">Ske</a> reverse-engineered the SSBU amiibo <a href="https://gist.github.com/xSke/979dabd395c39eff36bcaccf87d66a3e">personality calculation</a>. The calculation is fairly complicated and this article will explain it to a level others can understand.</p>
+
+<h2 id="personality-calculation">Personality Calculation</h2>
+
+<p>Amiibo have 66 different attributes that define their behavior. 34 of those directly affect their personality.</p>
+
+<p>The personalities are broken up into eight different branches:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">def</code></li>
+  <li><code class="language-plaintext highlighter-rouge">agl</code></li>
+  <li><code class="language-plaintext highlighter-rouge">ofn</code></li>
+  <li><code class="language-plaintext highlighter-rouge">rsk</code></li>
+  <li><code class="language-plaintext highlighter-rouge">gen</code></li>
+  <li><code class="language-plaintext highlighter-rouge">ent</code></li>
+  <li><code class="language-plaintext highlighter-rouge">cau</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dyn</code></li>
+</ul>
+
+<p>Each branch lists attributes that add or subtract points. The number of points depends on the level of the attribute. Attributes vary from 0.0 to 1.0.</p>
+
+<p>Here’s an example of the <code class="language-plaintext highlighter-rouge">def</code> branch.</p>
+
+<p>If the amiibo’s <code class="language-plaintext highlighter-rouge">offensive</code> attribute is above 0.26, then the <code class="language-plaintext highlighter-rouge">def</code> score is decreased by 18 points. If the <code class="language-plaintext highlighter-rouge">offensive</code> attribute is above 0.76, then the <code class="language-plaintext highlighter-rouge">def</code> score is further decreased by 20 points.</p>
+
+<p>If the amiibo’s <code class="language-plaintext highlighter-rouge">grounded</code> attribute is above 0.25, then the <code class="language-plaintext highlighter-rouge">def</code> score is increased by 18 points. If the <code class="language-plaintext highlighter-rouge">grounded</code> attribute is 0.76, then the <code class="language-plaintext highlighter-rouge">def</code> score is further increased by 18 points.</p>
+
+<p>All the branches, except <code class="language-plaintext highlighter-rouge">dyn</code>, require an amiibo to either have or not have an attribute above a certain level. For example, the <code class="language-plaintext highlighter-rouge">rsk</code> branch must have <code class="language-plaintext highlighter-rouge">appeal</code> (taunt) above 0.25. The <code class="language-plaintext highlighter-rouge">def</code> branch must <em>not</em> have the <code class="language-plaintext highlighter-rouge">offensive</code> attribute above 0.26. If a branch does not meet this requirement, then an amiibo cannot have any personality in that branch.</p>
+
+<p>Each of the branches has three personalities. The nominal personality is determined by the number of points scored for that branch. For example, if the <code class="language-plaintext highlighter-rouge">ofn</code> branch has over 235 points, then the personality is <code class="language-plaintext highlighter-rouge">Offensive</code>. If the score is over 180, then it’s <code class="language-plaintext highlighter-rouge">Aggressive</code>. If the score is over 100, then it’s Enthusiastic.</p>
+
+<p>SSBU calculates the score for each of the branches. Whichever branch has the highest score wins. If no branch meets the minimum requirements, then an amiibo is defined as <code class="language-plaintext highlighter-rouge">Normal</code>. There’s also a special case. If an amiibo has attributes all equal to 0, then it it <code class="language-plaintext highlighter-rouge">Normal</code>.</p>
+
+<h2 id="personalities">Personalities</h2>
+
+<p>The following lists some of the requirements for each of the personalities. For the full details, see the <a href="https://github.com/jozz024/smash-amiibo-editor/blob/main/resources/personality_data.json">raw data</a>. For attribute details, see <a href="https://docs.google.com/document/d/1L3c-QKr46ATTSxaicPHNFq5uW-uRytVViPRvdM93IQo/edit">this guide</a>. For a visual representation, check out <a href="https://www.icloud.com/numbers/045RmNMqRpVCxSSivldqLtWsg#Amiibo_Personalities">this spreadsheet</a>.</p>
+
+<h3 id="normal">Normal</h3>
+
+<p>This personality is the least interesting. It’s the default if no other personality fits.</p>
+
+<h3 id="def-cautious-realistic-unflappable">def (Cautious, Realistic, Unflappable)</h3>
+
+<h4 id="description">Description</h4>
+
+<p>This personality must use its shield a lot and walk on the ground. It must not not do anything too aggresive like going off stage. It shouldn’t run and collecting items is too risky. Overall, this is a hard personality to get because many attributes subtract from it and not many add.</p>
+
+<h4 id="must-not-have">Must NOT have</h4>
+
+<p><code class="language-plaintext highlighter-rouge">offensive</code> &gt;= 0.26</p>
+
+<h4 id="increased-by">Increased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">grounded</code></li>
+  <li><code class="language-plaintext highlighter-rouge">shield master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">shield catch master</code></li>
+</ul>
+
+<h4 id="decreased-by">Decreased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">offensive</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dash</code></li>
+  <li><code class="language-plaintext highlighter-rouge">cliffer</code></li>
+  <li><code class="language-plaintext highlighter-rouge">item throw to target</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dragoon collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">smashball collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">special flagger</code></li>
+</ul>
+
+<h4 id="personality-scores">Personality Scores</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Unflappable</code> &gt;= 240</li>
+  <li><code class="language-plaintext highlighter-rouge">Realistic</code> &gt;= 180</li>
+  <li><code class="language-plaintext highlighter-rouge">Cautious</code> &gt;= 100</li>
+</ul>
+
+<h3 id="agl-light-quick-lightning-fast">agl (Light, Quick, Lightning Fast)</h3>
+
+<h4 id="description-1">Description</h4>
+
+<p>This personality must move fast. It must be aggressive but not in the air. Collecting items is ok but anything that requires charging or would leave the amiibo in a vulnerable state is too risky.</p>
+
+<h4 id="must-have">Must have</h4>
+
+<p><code class="language-plaintext highlighter-rouge">dash</code> &gt;= 0.26</p>
+
+<h4 id="increased-by-1">Increased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">offensive</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dash</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dash attacker</code></li>
+  <li><code class="language-plaintext highlighter-rouge">item collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">carrier broker</code></li>
+</ul>
+
+<h4 id="decreased-by-1">Decreased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">air offensive</code></li>
+  <li><code class="language-plaintext highlighter-rouge">smash holder</code></li>
+  <li><code class="language-plaintext highlighter-rouge">critical hitter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">shield master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">hammer collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">special flagger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">homerun batter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">club swinger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">charger</code></li>
+</ul>
+
+<h4 id="personality-scores-1">Personality Scores</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Lightning Fast</code> &gt;= 225</li>
+  <li><code class="language-plaintext highlighter-rouge">Quick</code> &gt;= 170</li>
+  <li><code class="language-plaintext highlighter-rouge">Light</code> &gt;= 100</li>
+</ul>
+
+<h3 id="ofn-enthusiastic-aggressive-offensive">ofn (Enthusiastic, Aggressive, Offensive)</h3>
+
+<h4 id="description-2">Description</h4>
+
+<p>The amiibo must be aggressive and in the face of its opponents. Attacking off stage is encouraged. Items should not be used. If they are picked up, then they should be thrown at an opponent immediately.</p>
+
+<h4 id="must-have-1">Must have</h4>
+
+<p><code class="language-plaintext highlighter-rouge">near</code> &gt;= 0.25</p>
+
+<h4 id="increased-by-2">Increased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">near</code></li>
+  <li><code class="language-plaintext highlighter-rouge">offensive</code></li>
+  <li><code class="language-plaintext highlighter-rouge">attack out cliff</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dash</code></li>
+  <li><code class="language-plaintext highlighter-rouge">air offensive</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dash attacker</code></li>
+  <li><code class="language-plaintext highlighter-rouge">meteor master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">item throw to target</code></li>
+</ul>
+
+<h4 id="decreased-by-2">Decreased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">feint shooter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">item collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dragoon collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">smashball collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">hammer collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">special flagger</code></li>
+</ul>
+
+<h4 id="personality-scores-2">Personality Scores</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Offensive</code> &gt;= 235</li>
+  <li><code class="language-plaintext highlighter-rouge">Aggressive</code> &gt;= 180</li>
+  <li><code class="language-plaintext highlighter-rouge">Enthusiastic</code> &gt;= 100</li>
+</ul>
+
+<h3 id="rsk-reckless-thrill-seeker-daredevil">rsk (Reckless, Thrill Seeker, Daredevil)</h3>
+
+<h4 id="description-3">Description</h4>
+
+<p>The amiibo must play aggresively off stage, especially dunking. The amiibo should be in the air a lot, preferrable off stage. Melee counter attacks and parries are encouraged but projectile counters are not. Going for risky items is encouraged.</p>
+
+<h4 id="must-have-2">Must have</h4>
+
+<p><code class="language-plaintext highlighter-rouge">attack out cliff</code> &gt;= 0.26</p>
+
+<h4 id="increased-by-3">Increased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">near</code></li>
+  <li><code class="language-plaintext highlighter-rouge">offensive</code></li>
+  <li><code class="language-plaintext highlighter-rouge">attack out cliff</code></li>
+  <li><code class="language-plaintext highlighter-rouge">air offensive</code></li>
+  <li><code class="language-plaintext highlighter-rouge">cliffer</code></li>
+  <li><code class="language-plaintext highlighter-rouge">feint master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">feint counter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dash attacker</code></li>
+  <li><code class="language-plaintext highlighter-rouge">critical hitter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">meteor masher</code></li>
+  <li><code class="language-plaintext highlighter-rouge">just shield master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">hammer collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">special flagger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">carrier broker</code></li>
+</ul>
+
+<h4 id="decreased-by-3">Decreased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">grounded</code></li>
+  <li><code class="language-plaintext highlighter-rouge">feint shooter</code></li>
+</ul>
+
+<h4 id="personality-scores-3">Personality Scores</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Daredevil</code> &gt;= 220</li>
+  <li><code class="language-plaintext highlighter-rouge">Thrill Seeker</code> &gt;= 160</li>
+  <li><code class="language-plaintext highlighter-rouge">Reckless</code> &gt;= 80</li>
+</ul>
+
+<h3 id="gen-versatile-tricky-technician">gen (Versatile, Tricky, Technician)</h3>
+
+<h4 id="description-4">Description</h4>
+
+<p>This personality must parry. It will show off its skills including countering, parrying, dunking, and using most items.</p>
+
+<h4 id="must-have-3">Must have</h4>
+
+<p><code class="language-plaintext highlighter-rouge">just shield master</code> &gt;= 0.26</p>
+
+<h4 id="increased-by-4">Increased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">attack out cliff</code></li>
+  <li><code class="language-plaintext highlighter-rouge">feint master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">feint counter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">feint shooter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">catcher</code></li>
+  <li><code class="language-plaintext highlighter-rouge">attack cancel</code></li>
+  <li><code class="language-plaintext highlighter-rouge">meteor masher</code></li>
+  <li><code class="language-plaintext highlighter-rouge">shield master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">just shield master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">shield catch master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">item collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">item throw to target</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dragoon collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">smashball collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">item swinger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">homerun batter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">club swinger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dash swinger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">item shooter</code></li>
+</ul>
+
+<h4 id="decreased-by-4">Decreased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">air offensive</code></li>
+  <li><code class="language-plaintext highlighter-rouge">carrier broker</code></li>
+</ul>
+
+<h4 id="personality-scores-4">Personality Scores</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Technician</code> &gt;= 150</li>
+  <li><code class="language-plaintext highlighter-rouge">Tricky</code> &gt;= 120</li>
+  <li><code class="language-plaintext highlighter-rouge">Versatile</code> &gt;= 80</li>
+</ul>
+
+<h3 id="ent-show-off-flashy-entertainer">ent (Show-Off, Flashy, Entertainer)</h3>
+
+<h4 id="description-5">Description</h4>
+
+<p>This personality must taunt a lot. Dunking, charging regular/smash attacks, and parrying are encouraged. Items should be used as intended and not just thrown.</p>
+
+<h4 id="must-have-4">Must have</h4>
+
+<p><code class="language-plaintext highlighter-rouge">appeal</code> &gt;= 0.25</p>
+
+<h4 id="increased-by-5">Increased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">attack out cliff</code></li>
+  <li><code class="language-plaintext highlighter-rouge">smash holder</code></li>
+  <li><code class="language-plaintext highlighter-rouge">critical hitter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">meteor masher</code></li>
+  <li><code class="language-plaintext highlighter-rouge">just shield master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dragoon collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">smashball collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">hammer collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">special flagger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">homerun batter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">club swinger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">death swinger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">charger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">appeal</code></li>
+</ul>
+
+<h4 id="decreased-by-5">Decreased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">100 keeper</code></li>
+  <li><code class="language-plaintext highlighter-rouge">item throw to target</code></li>
+</ul>
+
+<h4 id="personality-scores-5">Personality Scores</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Entertainer</code> &gt;= 230</li>
+  <li><code class="language-plaintext highlighter-rouge">Flashy</code> &gt;= 170</li>
+  <li><code class="language-plaintext highlighter-rouge">Show-Off</code> &gt;= 90</li>
+</ul>
+
+<h3 id="cau-cool-logical-sly">cau (Cool, Logical, Sly)</h3>
+
+<h4 id="description-6">Description</h4>
+
+<p>This personlity must not parry. The amiibo should stay on the ground and use its shield a lot. It should stay far away from its opponents and counter projectiles if necessary. This is also a hard personality to get since many attributes take away from it and not many add to it.</p>
+
+<h4 id="must-not-have-1">Must NOT have</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">shield master</code> &gt;= 0.26</li>
+</ul>
+
+<h4 id="increased-by-6">Increased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">grounded</code></li>
+  <li><code class="language-plaintext highlighter-rouge">feint master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">feint shooter</code></li>
+</ul>
+
+<h4 id="decreased-by-6">Decreased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">near</code></li>
+  <li><code class="language-plaintext highlighter-rouge">offensive</code></li>
+  <li><code class="language-plaintext highlighter-rouge">attack out cliff</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dash</code></li>
+  <li><code class="language-plaintext highlighter-rouge">air offensive</code></li>
+  <li><code class="language-plaintext highlighter-rouge">cliffer</code></li>
+  <li><code class="language-plaintext highlighter-rouge">feint counter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">smash holder</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dash attacker</code></li>
+  <li><code class="language-plaintext highlighter-rouge">critical hitter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">meteor master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">shield master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">just shield master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">hammer collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">special flagger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">charger</code></li>
+</ul>
+
+<h4 id="personality-scores-6">Personality Scores</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Sly</code> &gt;= 215</li>
+  <li><code class="language-plaintext highlighter-rouge">Logical</code> &gt;= 160</li>
+  <li><code class="language-plaintext highlighter-rouge">Cool</code> &gt;= 80</li>
+</ul>
+
+<h3 id="dyn-laid-back-wild-lively">dyn (Laid Back, Wild, Lively)</h3>
+
+<h4 id="description-7">Description</h4>
+
+<p>This personality is quite different from the others. It has no specific attribute requirement. It’s similar to <code class="language-plaintext highlighter-rouge">rsk</code> except it doesn’t counter or parry. It should attack a lot, especially off stage. Charging attacks is good. Holding items is strongly encouraged. What’s particularly unusual is it’s discouraged from throwing, swinging, or shooting items. This personality will simply hold items and never use them, except some of the risky weapons.</p>
+
+<h4 id="must-have-5">Must have</h4>
+
+<p>(Nothing)</p>
+
+<h4 id="increased-by-7">Increased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">offensive</code></li>
+  <li><code class="language-plaintext highlighter-rouge">attack out cliff</code></li>
+  <li><code class="language-plaintext highlighter-rouge">air offensive</code></li>
+  <li><code class="language-plaintext highlighter-rouge">smash holder</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dash attacker</code></li>
+  <li><code class="language-plaintext highlighter-rouge">critical hitter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">meteor master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">shield master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dragoon collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">smashball collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">hammer collector</code></li>
+  <li><code class="language-plaintext highlighter-rouge">special flagger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">homerun batter</code></li>
+  <li><code class="language-plaintext highlighter-rouge">club swinger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">death swinger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">carrier broker</code></li>
+  <li><code class="language-plaintext highlighter-rouge">charger</code></li>
+</ul>
+
+<h4 id="decreased-by-7">Decreased by</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">catcher</code></li>
+  <li><code class="language-plaintext highlighter-rouge">attack cancel</code></li>
+  <li><code class="language-plaintext highlighter-rouge">just shield master</code></li>
+  <li><code class="language-plaintext highlighter-rouge">item throw to target</code></li>
+  <li><code class="language-plaintext highlighter-rouge">item swinger</code></li>
+  <li><code class="language-plaintext highlighter-rouge">item shooter</code></li>
+</ul>
+
+<h4 id="personality-scores-7">Personality Scores</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Lively</code> &gt;= 210</li>
+  <li><code class="language-plaintext highlighter-rouge">Wild</code> &gt;= 160</li>
+  <li><code class="language-plaintext highlighter-rouge">Laid Back</code> &gt;= 80</li>
+</ul>
+
+  </div><a class="u-url" href="/posts/amiibo-personality-analysis" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Tricks of the Trade</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Tricks of the Trade</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/rob-brown"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">rob-brown</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Writing about best development practices and other topics.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

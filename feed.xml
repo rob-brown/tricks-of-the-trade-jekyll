@@ -1,0 +1,2274 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-02-16T05:20:41+00:00</updated><id>/feed.xml</id><title type="html">Tricks of the Trade</title><subtitle>Writing about best development practices and other topics.</subtitle><entry><title type="html">Anatomy of an amiibo ID</title><link href="/amiibo/2024/02/16/anatomy-of-an-amiibo-id.html" rel="alternate" type="text/html" title="Anatomy of an amiibo ID" /><published>2024-02-16T00:51:00+00:00</published><updated>2024-02-16T00:51:00+00:00</updated><id>/amiibo/2024/02/16/anatomy-of-an-amiibo-id</id><content type="html" xml:base="/amiibo/2024/02/16/anatomy-of-an-amiibo-id.html">&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;You may have heard about data miners finding game details and releasing them before the game is ready. One such thing is amiibo IDs.
+However, I’ve been guessing amiibo IDs long before data miners even found them. Often times a game has amiibo support added before
+the amiibo is released. Guessing the IDs is fun for unlocking new items and behavior before the amiibo figure is available.&lt;/p&gt;
+
+&lt;p&gt;With the release of Sora for Super Smash Bros. Ultimate, I’m going to reveal how I’ve been guessing the amiibo IDs. Once Nintendo
+finds this article, future IDs may be less guessable. Though this is a fun exercise in reverse engineering and knowing the
+process is enlightening.&lt;/p&gt;
+
+&lt;h2 id=&quot;disclaimers&quot;&gt;DISCLAIMERS&lt;/h2&gt;
+
+&lt;p&gt;The bulk of the data for this article came from &lt;a href=&quot;https://github.com/N3evin/AmiiboAPI&quot;&gt;AmiiboAPI&lt;/a&gt; with the rest coming from my own research.&lt;/p&gt;
+
+&lt;p&gt;I do not condone cloning amiibo and selling them as your own. Even though I unlock features early, I subsequently buy amiibo once
+they do become available.&lt;/p&gt;
+
+&lt;h2 id=&quot;structure&quot;&gt;Structure&lt;/h2&gt;
+
+&lt;p&gt;The structure of amiibo IDs has been known for a long time. Here’s the ID for Zelda and Loftwing released with the remaster of
+The Legend of Zelda: Skyward Sword.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;01010300 04140902
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s the ID represented in &lt;a href=&quot;https://en.wikipedia.org/wiki/Hexadecimal&quot;&gt;hexadecimal&lt;/a&gt; form. Here are the parts broken out:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;010&lt;/code&gt;: Game series = The Legend of Zelda&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1&lt;/code&gt;: Character = Zelda&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;03&lt;/code&gt;: Variation = Zelda with Loftwing&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;00&lt;/code&gt;: Form = Figure&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0414&lt;/code&gt;: Serial number = 414 hexadecimal 1044 decimal&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;09&lt;/code&gt;: amiibo series = The Legend of Zelda&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;02&lt;/code&gt;: Format version = 2&lt;/p&gt;
+
+&lt;p&gt;The first three bytes (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;010103&lt;/code&gt;) contain the key information for the character. The remaining five bytes (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0004140902&lt;/code&gt;) contains metadata.
+Most games only look at the first two or three bytes. This allows them to be compatible with future amiibo without updating the game.&lt;/p&gt;
+
+&lt;p&gt;The rest of this post will dive into the details of each portion.&lt;/p&gt;
+
+&lt;h2 id=&quot;game-series&quot;&gt;Game Series&lt;/h2&gt;
+
+&lt;p&gt;Not to be confused with the “amiibo Series”. The game series represents where the character originated from, ex. Link -&amp;gt; The Legend
+of Zelda. For game series with many amiibo, there will be multiple game series IDs assigned. How this portion of the ID is more elusive
+and will be covered in detail later in the article.&lt;/p&gt;
+
+&lt;h2 id=&quot;character-and-variation&quot;&gt;Character and Variation&lt;/h2&gt;
+
+&lt;p&gt;The character is the most important information in the amiibo ID. This is often the only information a game is concerned about.&lt;/p&gt;
+
+&lt;p&gt;For a single game series ID, there are 15 possible amiibo. Some series have much more than that. So when it exceeds 15, it add a new
+game series ID. The subsequent series ID is usually sequential. However, The Legend of Zelda series uses &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;010&lt;/code&gt; but some Breath of
+the Wild figures use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;014&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Speaking of The Legend of Zelda, here are some characters:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0&lt;/code&gt; Link&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1&lt;/code&gt; Zelda&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2&lt;/code&gt; Ganondorf&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;3&lt;/code&gt; Midna and Wolf Link&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;4&lt;/code&gt; Daruk&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;5&lt;/code&gt; Urbosa&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;6&lt;/code&gt; Mipha&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;7&lt;/code&gt; Revali&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;You might be thinking, where is the Sheik amiibo? This is where variation comes in. Zelda is variation &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;00&lt;/code&gt;. Sheik is variation &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;01&lt;/code&gt;
+(25 year-old spoiler…Sheik is Zelda).&lt;/p&gt;
+
+&lt;p&gt;The variation is used to distinguish the “Player 2” figures. Specifically the Super Smash Bros. Cloud, Corrin, and Bayonetta figurines.&lt;/p&gt;
+
+&lt;p&gt;The variation has also been used to distinguish game-specific amiibo. For example, Zelda &amp;amp; Loftwing, Cat Peach, and Cat Mario are
+different variations from their base character. Scanning these amiibo into their respective games gave different rewards than
+scanning other variants.&lt;/p&gt;
+
+&lt;p&gt;The use of variants is not consistent. For example, shortly after the Skyward Sword and Super Mario 3D world remasters release came
+Metroid Dread. The Metroid Dread Samus amiibo gives different rewards than other Samus amiibo but it’s not a variant. This means that
+Metroid Dread must look at the full amiibo ID to distinguish this amiibo.&lt;/p&gt;
+
+&lt;p&gt;To further confuse matters, Toon Link is a variant of Link. However, there is no Young Link variant. Super Smash Bros. Ultimate
+treats “Link” and “Young Link” as different characters. So, the game must look at the full ID. This means if there is a new
+“Young Link” amiibo released, it will be treated as Link unless the game is updated.&lt;/p&gt;
+
+&lt;p&gt;Whoever made the Skylander amiibo completely ignored the variation and serial number. Hammer Slam Bowser and Dark Hammer Slam Bowser
+share the same ID. Same for Turbo Charge Donkey Kong and Dark Turbo Charge Donkey Kong.&lt;/p&gt;
+
+&lt;p&gt;Currently, the character with the most variations is Isabelle from Animal Crossing. She has three figures and seven cards wearing
+the following six outfits.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;00&lt;/code&gt; Summer&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;01&lt;/code&gt; Winter&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;02&lt;/code&gt; Kimono&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;03&lt;/code&gt; Dress&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;04&lt;/code&gt; Tropical&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;05&lt;/code&gt; Sweater&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;character-id&quot;&gt;Character ID&lt;/h3&gt;
+
+&lt;p&gt;Though I treat game series, character, and variation as three different things they really get mashed into one thing: the character
+ID. Let’s take character ID for Pikachu: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;191900&lt;/code&gt;. It can be helpful to think of the game series having four digits, in this case
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1900&lt;/code&gt;. Then the character number is 19 hexadecimal or 25 decimal. Adding &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1900&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;19&lt;/code&gt; gives the base ID &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1919&lt;/code&gt;. Append the
+variation &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;00&lt;/code&gt; to get the full character ID of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;191900&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;form&quot;&gt;Form&lt;/h2&gt;
+
+&lt;p&gt;The form determines their physical representation. The options are few but Nintendo occassionally surprises us with new forms.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;00&lt;/code&gt; Figure&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;01&lt;/code&gt; Card&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;02&lt;/code&gt; Yarn&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;03&lt;/code&gt; Band&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;You’ve likely seen the figures. They are the most common. You may have also seen cards such as the many Animal Crossing cards.&lt;/p&gt;
+
+&lt;p&gt;The other types are less common. With the Yoshi series came several figures crocheted from yarn. This is a reference to Yoshi’s
+Wooly World where Yoshi and others are made of yarn.&lt;/p&gt;
+
+&lt;p&gt;The newest form are wrist bands. You receive these at the Super Nintendo World theme parks. This is a clever way to introduce more
+people to the amiibo functionality within games.&lt;/p&gt;
+
+&lt;h2 id=&quot;serial-number&quot;&gt;Serial Number&lt;/h2&gt;
+
+&lt;p&gt;By itself, the serial number is mundane. It’s simply a sequentially-assigned number. What’s more interesting is in what’s missing.
+There are several gaps. These gaps could indicate canceled amiibo. Or some card series carved out more numbers than needed.
+More on this below.&lt;/p&gt;
+
+&lt;h2 id=&quot;amiibo-series&quot;&gt;amiibo Series&lt;/h2&gt;
+
+&lt;p&gt;Not to be confused with the “Game Series”. For amiibo figures, this determines the base the figure stands on. Each base has a
+slightly different design. The most notable difference between game series and amiibo series is the Super Smash Bros. series.
+It contains characters from a variety of games, ex. Legend of Zelda, Mega Man, Pikmin, Metroid.&lt;/p&gt;
+
+&lt;p&gt;These are the current series:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;amiibo Series ID&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Series Name&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;00&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Super Smash Bros.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;01&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Super Mario&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;02&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chibi-Robo!&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;03&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Yoshi&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;04&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Splatoon&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;05&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Animal Crossing&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;06&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;8-bit Mario&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;07&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Skylanders&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;09&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Legend Of Zelda&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0A&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Shovel Knight&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0B&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0C&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Kirby&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0D&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Pokemon&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0E&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mario Sports Superstars&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0F&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Monster Hunter&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;BoxBoy!&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;11&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Pikmin&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;12&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fire Emblem&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;13&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Metroid&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;14&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Others&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;15&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mega Man&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;16&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Diablo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;17&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Power Pros&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;18&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Monster Hunter&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;19&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Yu-Gi-Oh!&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1A&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1B&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Xenoblade Chronicles&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FF&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Super Nintendo World&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;format-version&quot;&gt;Format Version&lt;/h2&gt;
+
+&lt;p&gt;The final byte is the “format version”. So far it’s always &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;02&lt;/code&gt;. If a new format is ever made, then this number could be
+different. It’s not likely, so just expect this to always be &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;02&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;game-series-assignment&quot;&gt;Game Series Assignment&lt;/h2&gt;
+
+&lt;p&gt;Now to dig into the most critical data, the game series. For existing series, it’s trivial to look up the game series ID. But
+for new games, how can you guess the series ID?&lt;/p&gt;
+
+&lt;p&gt;The game series numbers are arbitrarily assigned. Fortunately, people (especially programmers) like organization. I’ve
+deduced some patterns through what I call “playing solitaire with the data”. Basically categorizing data and finding
+similarities.&lt;/p&gt;
+
+&lt;p&gt;I’ll start by dumping a large table of data then explain what it means.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Series ID&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Name&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Publisher/Developer&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;000-002&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Super Mario Bros.&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;004&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;008&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Yoshi&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;00C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Donky Kong&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;010&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Legend of Zelda&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;014&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Breath of the Wild&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;018-051&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Animal Crossing&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;054&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;058&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Star Fox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;05C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Metroid&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;060&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;F-Zero&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;064&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Pikmin&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;068&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;06C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Punch Out&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;070&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Wii Fit&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;074&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Kid Icarus&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;078&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Classic Nintendo&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;07C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mii&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;080&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Splatoon&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;09C-09D&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mario Sports Superstars&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0A4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;ARMS&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;190-1D4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Pokémon&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo/GameFreak&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1F0&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Kirby&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo/HAL Labs&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1F4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;BoxBoy&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo/HAL Labs&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;210&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fire Emblem&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;224&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Xenoblade&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo/Monolith Soft&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;228&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Earthbound&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;22C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chibi Robo&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Nintendo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;320&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Sonic&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Sega&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;324&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bayonetta&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Sega/Platinum Games&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;328&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;330&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;334&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Pac-Man&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bandai Namco&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;338&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Dark Souls&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bandai Nameco&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;33C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Tekken&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bandai Namco&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;340&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;344&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;348&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mega Man&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Capcom&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;34C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Street Fighter&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Capcom&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;350&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Monster Hunter&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Capcom&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;354&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;358&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;35C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Shovel Knight&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Yacht Club Games&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;360&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Final Fantasy&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Square Enix&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;364&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Dragon Quest&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Square Enix&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;368&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;36C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;370&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;374&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Super Mario Cereal&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Kellogs&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;378&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Metal Gear Solid&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Konami&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;37C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Castlevania&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Konami&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;380&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Jikkyou Powerful Pro Baseball&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Konami&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;384&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;388&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;38C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Diablo&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Blizzard&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;390&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;394&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;398&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;39C&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3A0&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Persona&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Atlus/Sega&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3A4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3A8&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3AC&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3B0&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3B4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Banjo and Kazooie&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Rare/Microsoft&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3B8&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3BC&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3C0&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3C4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3C8&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fatal Fury&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;SNK&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3CC&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3D0&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3D4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3D8&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3DC&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Minecraft&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mojang/Microsoft&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3E0&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3E4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3E8&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3EC&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3F0&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Kingdom Hearts&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Disney/Square Enix&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3F4&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3F8&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3FC&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;400&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;x&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The series IDs &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;000&lt;/code&gt;-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;319&lt;/code&gt; are reserved for Nintendo. They don’t appear to follow a distinct pattern. So I won’t say more about them.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;320&lt;/code&gt; and beyond are for third-party developers. Notice that I set up the table so that each entry ends with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;4&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;8&lt;/code&gt;, or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C&lt;/code&gt; (12 decimal).
+I call each entry a “slot”. One slot is can have 64 amiibo (ex. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;3740&lt;/code&gt;-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;377F&lt;/code&gt;) ignoring variants. Smaller publishers (ex. Yacht Club
+Games, maker of Shovel Knight) are assigned a single slot. Larger publishers that make multiple games are given five slots. This is
+enough for 320 amiibo (ignoring variants) across five game series.&lt;/p&gt;
+
+&lt;p&gt;The latest amiibo, Sora from Kingdom Hearts, was assigned series ID &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;3F0&lt;/code&gt;. Following this pattern, if a new publisher released an amiibo,
+it’s series ID would be &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;404&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;You might think this is a large waste of space slicing out five slots at a time. However, from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;404&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FFC&lt;/code&gt; inclusive, there are 767 slots.
+That’s enough for 153 more major publishers. amiibo have been around for almost a decade. The numbers aren’t running out soon.&lt;/p&gt;
+
+&lt;h2 id=&quot;possible-cancelations&quot;&gt;Possible Cancelations&lt;/h2&gt;
+
+&lt;p&gt;The following tables show gaps in the serial numbers. There’s also some speculation about what might have used those numbers. At the time of
+writing, the latest serial number is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;043E&lt;/code&gt;.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Range&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Size&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Speculation&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;3B&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Possibly Chibi-Robo amiibo&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1D9&lt;/code&gt;—&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;237&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;95&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Probably Animal Crossing cards, increase 405 to 500&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;23C&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Maybe another Skylander or Pokémon&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2C3&lt;/code&gt;—&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2E0&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;30&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Probably more Mario Sports Superstars, increase 90 to 120&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;31F&lt;/code&gt;—&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;34A&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;44&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Probably Animal Crossing cards, increase 56 to 100&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;351&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Probably a Toon LoZ amiibo (Ganondorf?)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;357&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Probably a BotW amiibo (Calamity Ganon?)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;39A&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Probably a Link’s Awakening amiibo (Marin?)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;3D8&lt;/code&gt;—&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;40B&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;52&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Probably Animal Crossing cards, increase 48 to 100&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;416&lt;/code&gt;—&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;417&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Possibly Splatoon 3 or Tears of the Kingdom&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;42F&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;More Power-Up bands? (Link?)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;431&lt;/code&gt;—&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;432&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;More Power-Up bands? (Donkey Kong? Diddy Kong?)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;436&lt;/code&gt;—&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;43C&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Maybe Splatoon 3 or Xenoblade but probably not&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;For just being eight bytes of data, there is a lot that can be inferred. It’s similar to how the
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Periodic_table#History&quot;&gt;periodic table of elements came about&lt;/a&gt;. Or the
+&lt;a href=&quot;https://en.wikipedia.org/wiki/German_tank_problem&quot;&gt;German tank problem&lt;/a&gt;.
+Next time you see a mess of data, see if you can tease out those little patterns.&lt;/p&gt;</content><author><name>Robert Brown</name></author><summary type="html">Intro</summary></entry><entry><title type="html">Reverse Engineering Dampé’s Dungeon Adventure</title><link href="/amiibo/2022/10/18/reverse-engineering-dampes-dungeon-adventure.html" rel="alternate" type="text/html" title="Reverse Engineering Dampé’s Dungeon Adventure" /><published>2022-10-18T02:49:00+00:00</published><updated>2022-10-18T02:49:00+00:00</updated><id>/amiibo/2022/10/18/reverse-engineering-dampes-dungeon-adventure</id><content type="html" xml:base="/amiibo/2022/10/18/reverse-engineering-dampes-dungeon-adventure.html">&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;Dampé’s Dungeon Adventure is my favorite feature in the Link’s Awakening remake. Since the dungeons can be stored on an amiibo figurine, the data is available to be easily read from it. I’ve been meaning to decode that data. Now three years later I finally got to it. It took about a week to decode the data for this post. Most of that time was &lt;a href=&quot;https://www.icloud.com/numbers/0f0fVIs3UOVA_-RFASWRlPB_w#Link's_Awakening_Dungeon_Catalog&quot;&gt;cataloging the 187 available chambers&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;dungeon-data&quot;&gt;Dungeon Data&lt;/h2&gt;
+
+&lt;p&gt;Like all games that store data to an amiibo, the game has 216 bytes available. Link’s Awakening more or less uses that full space. I will go through each of the significant portions of that data. My explanations will use hexadecimal format, meaning that values are base 16 using 0-9 and A-F.&lt;/p&gt;
+
+&lt;h3 id=&quot;basic-info&quot;&gt;Basic Info&lt;/h3&gt;
+
+&lt;p&gt;The first four bytes are in the following format: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x03XX0100&lt;/code&gt;. Three of the four bytes appear to always be the same. The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;XX&lt;/code&gt; portion changes depending on the challenge chosen. Dampé has 24 challenges numbered &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x00&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x17&lt;/code&gt;. There’s also a free-play mode which has the value &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x30&lt;/code&gt;. So, must dungeons you see on amiibo will probably start with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x03300100&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The tutorial levels are mostly the same as the free-play mode. The main difference is that they may have some extra restrictions: no sword, limited hearts, or limited time. There are also chamber placement restrictions. Some chambers are placed by Dampé. In the chamber data, these locked chambers are indicated by a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0000&lt;/code&gt; chamber value (more on this in a moment).&lt;/p&gt;
+
+&lt;p&gt;The next four bytes are a mystery. I haven’t decoded them yet. They remain constant for a dungeon arrangement. Changing the dungeon changes these bytes, even if the same chamber is placed in the same spot. It seems like a random ID or perhaps a salt to make cryptanalysis on the tamper protection harder. Any time these bytes change, the dungeon must be played through to save it to an amiibo.&lt;/p&gt;
+
+&lt;h3 id=&quot;chamber-data&quot;&gt;Chamber Data&lt;/h3&gt;
+
+&lt;p&gt;The next 128 bytes are the most interesting. This is the chamber data. A dungeon is an 8x8 grid (up to 64 chambers). Each chamber gets two bytes. The chambers are stored in row-major format, meaning all of the first row is stored. After that is the second row and so on.&lt;/p&gt;
+
+&lt;p&gt;Looking at the raw data, a chamber will look like this: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x6201&lt;/code&gt;. Cells without a chamber are always &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0xFFFF&lt;/code&gt;. The data is stored in little-endian format. Basically that means the least-significant byte is stored first. This can be more efficient for computers to work with but the bytes are backwards from how we would normally read them. So, let’s flip it around: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0162&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;There are 4 hex digits. We’ll ignore the first digit for now. The latter three are the important bits that determine the room. In short, these three digits represent coordinates: dungeon, y-coordinate, and x-coordinate.&lt;/p&gt;
+
+&lt;p&gt;The dungeons are numbered &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0xA&lt;/code&gt;. If you look at the catalog of chambers, you’ll notice dungeon &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x8&lt;/code&gt; is not used. That is the Wind Fish’s egg. There are no chambers from that dungeon.&lt;/p&gt;
+
+&lt;p&gt;Now for a brief history lesson. The original release of Link’s Awakening had the Wind Fish’s Egg as the final dungeon. In Link’s Awakening DX (released on Game Boy &lt;strong&gt;Color&lt;/strong&gt;, there was a new dungeon released: the &lt;strong&gt;Color Dungeon&lt;/strong&gt;. This is dungeon &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x9&lt;/code&gt;. It is optional, though you can play through it fairly early in the game if you know where it is.&lt;/p&gt;
+
+&lt;p&gt;But wait, I said it goes to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0xA&lt;/code&gt;. What about that? Dungeon &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0xA&lt;/code&gt; isn’t a dungeon. It’s a grab bag of extra chambers. They are mostly some mini-bosses from the mini-dungeons.&lt;/p&gt;
+
+&lt;p&gt;Now for the x-y coordinates. You’ll notice that the y-coordinate comes first though we typically use the x-coordinate first. Remember the chambers are stored in row-major order. The y-coordinate determines the row. Then the x-coordinate picks the chamber within that row.&lt;/p&gt;
+
+&lt;p&gt;The x-y coordinates are not coordinates in your dungeon. Rather they are the coordinates of the chamber in the original dungeon.&lt;/p&gt;
+
+&lt;p&gt;If these are coordinates, then what about dungeons with multiple floors? There are two dungeons with multiple floors: The Key Cavern with two floors and the Eagle’s Tower with “four” floors.&lt;/p&gt;
+
+&lt;p&gt;If you map out all the chambers for the Key Cavern, they look like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img height=&quot;200&quot; src=&quot;/assets/img/key-cavern.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Doing the same for the Eagle’s Tower:&lt;/p&gt;
+
+&lt;p&gt;&lt;img height=&quot;200&quot; src=&quot;/assets/img/eagles-tower.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;There’s an interesting thing to note about the Eagle’s Tower. The fourth floor is unreachable. You have to collapse the fourth floor into the third floor in order to reach it. In reality, you are probably traveling to and from the third and fourth floors. Internally, the game is probably re-mapping the stairs and doors after you break the pillars. It’s a similar trick to how the multiple floors works in the first place to make a three-dimensional dungeon into a two-dimensional dungeon (which is really just a one-dimensional list of chambers anyway).&lt;/p&gt;
+
+&lt;p&gt;The keen eye will notice these two dungeons still fit into an 8x8 grid. This means you could logically create a multi-floor dungeon yourself even though Dampé’s map will show it as a single floor.&lt;/p&gt;
+
+&lt;p&gt;There are a few chambers that don’t exist in the original dungeons. The primary chambers being where you can play one of the nightmares as if they were a mini-boss. If you check these coordinates against the dungeon maps, they point to a location with no chamber. Perhaps through modding or glitches you could get to these chambers in the original dungeons. Or maybe it’s just a convenient organization system. There are a few chambers that don’t perfectly match their original counterparts.&lt;/p&gt;
+
+&lt;p&gt;That was a long explanation of the coordinate system. As promised, back to the first hex digit. Dampé’s Dungeon Adventure lets you add “plus effects” to a chamber. This can alter it in some way such as doubling the enemies or randomly dropping bombs/hearts/rupees. Here are the values of each plus effect:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Effect&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;ID&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;No effect&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bombs&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Rupees&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Hearts&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Wallmaster&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Double enemies&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;5&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Shadow Link&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The Wallmaster and Shadow Link enemies are limited to one per dungeon. The other effects can be added multiple times. Though the double enemy modifier may only be used on chambers with enemies.&lt;/p&gt;
+
+&lt;p&gt;Since the numbers are continuous instead of powers of 2 (1, 2, 4, 8, …) naturally a chamber may only have one effect. They cannot stack.&lt;/p&gt;
+
+&lt;h3 id=&quot;bookkeeping-data&quot;&gt;Bookkeeping Data&lt;/h3&gt;
+
+&lt;p&gt;After the chamber data are two names, each up to 32 bytes. The first name is the owner who created the dungeon. The second is the name of the best completion time. They are almost certainly the same name unless you pass the data to another account via amiibo.&lt;/p&gt;
+
+&lt;p&gt;Note that the names are from the Nintendo Switch account name, not the Link’s Awakening save file name.&lt;/p&gt;
+
+&lt;p&gt;The names are store in UTF-8 format. It’s a complicated format but here’s a brief explanation. A character (called a grapheme) can be made of one or more code points. A code point can be between 1-4 bytes. All the ASCII characters (think Roman letters, Arabic numerals, common symbols) all fit in one byte. Accented letters, other alphabets, less-common symbols are more than one byte.&lt;/p&gt;
+
+&lt;p&gt;Nintendo Switch account names are limited to 10 characters. Seeing that a single code point can be up to four bytes and graphemes can have more than one code point, it’s conceivable that you could overflow the 32-byte limit on these names. On the Nintendo Switch keyboard, I don’t think there are any characters you can type that is more than two-bytes long. So 32 bytes is plenty.&lt;/p&gt;
+
+&lt;p&gt;The next data field is the best completion time. It is a four-byte integer (little endian) measured in centiseconds. Yes, centiseconds. The game never shows more than two decimal points. So there’s no need to use a more standard unit like milliseconds. This make the value more compact.&lt;/p&gt;
+
+&lt;p&gt;Even though four bytes could store a larger value, the timer is capped at 59:59.99. I made a full 64-chamber dungeon, including every boss and mini-boss. I was able to complete that labyrinth well under the hour limit.&lt;/p&gt;
+
+&lt;p&gt;Note that you must first play through and beat a dungeon before you can save it to an amiibo. There will always be a completion time.&lt;/p&gt;
+
+&lt;p&gt;&lt;img width=&quot;95%&quot; src=&quot;/assets/img/labyrinth.png&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;equipment&quot;&gt;Equipment&lt;/h3&gt;
+
+&lt;p&gt;The next four bytes (really just two) are also interesting. They contain all the equipment you have when you saved the dungeon. Since you can’t get a chamber until you’ve beaten the associated dungeon, you will always be able to beat it (barring any mods or sequence skips). This also ensures that someone else who plays the dungeon will be on the same footing as you. So they can’t get a faster completion time just by having better equipment.&lt;/p&gt;
+
+&lt;p&gt;The equipment is stored in a bit field. This means each binary digit determines the gear you have. 1 means you have it, 0 means you don’t.&lt;/p&gt;
+
+&lt;p&gt;Even though this is a little endian number, I’m going to treat it as big endian for simplicity. It seems to fit better treating it that way. Here are the values of each item. Some values are guessed because you have to beat two dungeons before Dampé lets you build your first dungeon.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Equipment&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Value&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Sword&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Magic Powder&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Roc’s Feather&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Power Bracelet&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ocarina&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bottle from Ghost&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bottle from Fishing&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;64&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bottle from Dampé&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;128&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Pegasus Boots&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;256&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Shield&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;512&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bomb&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1024&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bow&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2048&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Hookshot&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4096&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Boomerang&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8192&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Magic Rod&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16,384&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Shovel&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32,768&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The next four bytes work the same. I call these the enhancements. They change your equipment. For example, upgrading the Power Bracelet to Powerful Bracelet, having a fairy in a bottle, or learning a song on the ocarina.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Enhancement&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Value&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fairy in bottle 1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fairy in bottle 2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fairy in bottle 3&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Secret Medecine&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Flippers&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ballad of the Wind Fish&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mango’s Mambo&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;64&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Frog’s Song of Soul&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;128&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Koholint Sword&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;256&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mirror Shield&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;512&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Powerful Bracelet&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1024&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Double Magic Dust&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2048&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Double Bombs&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4096&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Double Arrows&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8192&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Red Mail&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16,384&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Blue Mail&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32,768&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The red and blue mail are mutually exclusive. Through modding you could give yourself both. Not sure how the game would handle that visually.&lt;/p&gt;
+
+&lt;h3 id=&quot;tamper-protection&quot;&gt;Tamper Protection&lt;/h3&gt;
+
+&lt;p&gt;The final four bytes are a CRC. Basically it’s a value that can be used to verify the data hasn’t been tampered with. In order to modify the data on an amiibo, you would also need to update this value accordingly. Otherwise, the data will be rejected. Super Smash Bros. Ultimate has a similar CRC for its data. Though it puts the CRC as the first four bytes instead of the last four.&lt;/p&gt;
+
+&lt;h2 id=&quot;missing-data&quot;&gt;Missing Data&lt;/h2&gt;
+
+&lt;p&gt;So what’s missing? The number of hearts you have are not recorded. So someone playing a shared dungeon could have more or less. This could give them an advantage to get a faster time but a good player won’t get hurt much anyway.&lt;/p&gt;
+
+&lt;p&gt;There are no time limits. That’s a feature strictly of a few Dampé challenges. Setting the dungeon type to one of those challenges might get you a time limit.&lt;/p&gt;
+
+&lt;p&gt;The challenges that don’t allow you a sword don’t actually change the equipment. That’s also a feature of the Dampé challenges. Though conceivable you could modify the equipment list to take away the sword and other equipment/enhancements.&lt;/p&gt;
+
+&lt;p&gt;There’s no way to name a dungeon. Your dungeon will automatically be named “Shrine/Cave/Maze/Labyrinth of [Name]”. The name is determined by the number of chambers in the dungeon.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Classification&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Number of Chambers&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Shrine&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3-10&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Cave&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;11-20&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Maze&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;21-30&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Labyrinth&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;31-64&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;No descriptions either. These are determined by the dungeon level. Only Dampé’s challenges have semi-meaningful descriptions.&lt;/p&gt;
+
+&lt;p&gt;There is no creation date (for dungeons you’ve made) or received date (for chambers you’ve received via amiibo). Both of those are stored in the game itself.&lt;/p&gt;
+
+&lt;p&gt;How stairs are connected are not in the data. Instead, they recalculated each time a chamber is placed. The stairs are shown in one of the four corners of the tile. The game then calculates the distance between every pair of stairs. It then sorts them by distance (ascending). When distance is equal, it sorts by row (ascending). When row is equal, it sorts by column (ascending). It then runs through the list and pairs up the stairs. Since it uses a greedy algorithm you can fabricate where all the stairs are close together but one or more pairings are far apart. This would not be a good algorithm to minimize digging tunnels. Though it can be used to draw a happy little tree.&lt;/p&gt;
+
+&lt;p&gt;&lt;img width=&quot;95%&quot; src=&quot;/assets/img/dungeon-stairs1.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img width=&quot;95%&quot; src=&quot;/assets/img/dungeon-stairs2.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img width=&quot;95%&quot; src=&quot;/assets/img/dungeon-stairs3.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The UI has seven distinct colors assigned in this order:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Green&lt;/li&gt;
+  &lt;li&gt;Cyan&lt;/li&gt;
+  &lt;li&gt;Magenta&lt;/li&gt;
+  &lt;li&gt;Yellow&lt;/li&gt;
+  &lt;li&gt;Red&lt;/li&gt;
+  &lt;li&gt;Blue&lt;/li&gt;
+  &lt;li&gt;Orange&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Knowing that order, you can follow along with the screenshots above to confirm the algorithm works as described.&lt;/p&gt;
+
+&lt;h2 id=&quot;resources&quot;&gt;Resources&lt;/h2&gt;
+
+&lt;p&gt;For full details of the chambers, &lt;a href=&quot;https://www.icloud.com/numbers/0f0fVIs3UOVA_-RFASWRlPB_w#Link's_Awakening_Dungeon_Catalog&quot;&gt;check out the chamber catalog&lt;/a&gt;. It almost certainly contains errors or missing details. There is a lot to note for 187 chambers.&lt;/p&gt;
+
+&lt;p&gt;I also used HexFiend for viewing the files. It has a feature to use TCL scripts to parse out binary data. I’ve included my script below. Note that the amiibo data must first be decrypted for this binary template script to be useful.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/rob-brown/fbff18427994325aeadd32af3afdc11c.js&quot;&gt;&lt;/script&gt;
+
+&lt;h2 id=&quot;updates&quot;&gt;Updates&lt;/h2&gt;
+
+&lt;p&gt;20 Oct 2022: Added details about the stair-pairing algorithm.&lt;/p&gt;</content><author><name>Robert Brown</name></author><summary type="html">Intro</summary></entry><entry><title type="html">Amiibo Personality Analysis</title><link href="/posts/amiibo-personality-analysis" rel="alternate" type="text/html" title="Amiibo Personality Analysis" /><published>2022-05-01T13:02:00+00:00</published><updated>2022-05-01T13:02:00+00:00</updated><id>/posts/amiibo-personality-analysis</id><content type="html" xml:base="/posts/amiibo-personality-analysis">&lt;h2 id=&quot;update&quot;&gt;Update&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;8 April 2023&lt;/strong&gt;: I had ported the personality calculation to Elixir. However, it was a direct port. I’ve now &lt;a href=&quot;https://gist.github.com/rob-brown/d2cfaa843c4e65cfcb85c37dd0a8bebb&quot;&gt;rewritten the Elixir code&lt;/a&gt; to be more readable. I also converted the JSON data to TOML and included excerpts of this post in it. Many fields were renamed to clarify their intent. The code generator to convert the TOML file into Elixir code has been omitted to focus on the core algorithm.&lt;/p&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;A while back, &lt;a href=&quot;https://github.com/xSke&quot;&gt;Ske&lt;/a&gt; reverse-engineered the SSBU amiibo &lt;a href=&quot;https://gist.github.com/xSke/979dabd395c39eff36bcaccf87d66a3e&quot;&gt;personality calculation&lt;/a&gt;. The calculation is fairly complicated and this article will explain it to a level others can understand.&lt;/p&gt;
+
+&lt;h2 id=&quot;personality-calculation&quot;&gt;Personality Calculation&lt;/h2&gt;
+
+&lt;p&gt;Amiibo have 66 different attributes that define their behavior. 34 of those directly affect their personality.&lt;/p&gt;
+
+&lt;p&gt;The personalities are broken up into eight different branches:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;def&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;agl&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ofn&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rsk&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gen&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ent&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cau&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dyn&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Each branch lists attributes that add or subtract points. The number of points depends on the level of the attribute. Attributes vary from 0.0 to 1.0.&lt;/p&gt;
+
+&lt;p&gt;Here’s an example of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;def&lt;/code&gt; branch.&lt;/p&gt;
+
+&lt;p&gt;If the amiibo’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;offensive&lt;/code&gt; attribute is above 0.26, then the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;def&lt;/code&gt; score is decreased by 18 points. If the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;offensive&lt;/code&gt; attribute is above 0.76, then the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;def&lt;/code&gt; score is further decreased by 20 points.&lt;/p&gt;
+
+&lt;p&gt;If the amiibo’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grounded&lt;/code&gt; attribute is above 0.25, then the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;def&lt;/code&gt; score is increased by 18 points. If the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grounded&lt;/code&gt; attribute is 0.76, then the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;def&lt;/code&gt; score is further increased by 18 points.&lt;/p&gt;
+
+&lt;p&gt;All the branches, except &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dyn&lt;/code&gt;, require an amiibo to either have or not have an attribute above a certain level. For example, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rsk&lt;/code&gt; branch must have &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appeal&lt;/code&gt; (taunt) above 0.25. The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;def&lt;/code&gt; branch must &lt;em&gt;not&lt;/em&gt; have the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;offensive&lt;/code&gt; attribute above 0.26. If a branch does not meet this requirement, then an amiibo cannot have any personality in that branch.&lt;/p&gt;
+
+&lt;p&gt;Each of the branches has three personalities. The nominal personality is determined by the number of points scored for that branch. For example, if the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ofn&lt;/code&gt; branch has over 235 points, then the personality is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Offensive&lt;/code&gt;. If the score is over 180, then it’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Aggressive&lt;/code&gt;. If the score is over 100, then it’s Enthusiastic.&lt;/p&gt;
+
+&lt;p&gt;SSBU calculates the score for each of the branches. Whichever branch has the highest score wins. If no branch meets the minimum requirements, then an amiibo is defined as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Normal&lt;/code&gt;. There’s also a special case. If an amiibo has attributes all equal to 0, then it it &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Normal&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;personalities&quot;&gt;Personalities&lt;/h2&gt;
+
+&lt;p&gt;The following lists some of the requirements for each of the personalities. For the full details, see the &lt;a href=&quot;https://github.com/jozz024/smash-amiibo-editor/blob/main/resources/personality_data.json&quot;&gt;raw data&lt;/a&gt;. For attribute details, see &lt;a href=&quot;https://docs.google.com/document/d/1L3c-QKr46ATTSxaicPHNFq5uW-uRytVViPRvdM93IQo/edit&quot;&gt;this guide&lt;/a&gt;. For a visual representation, check out &lt;a href=&quot;https://www.icloud.com/numbers/045RmNMqRpVCxSSivldqLtWsg#Amiibo_Personalities&quot;&gt;this spreadsheet&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;normal&quot;&gt;Normal&lt;/h3&gt;
+
+&lt;p&gt;This personality is the least interesting. It’s the default if no other personality fits.&lt;/p&gt;
+
+&lt;h3 id=&quot;def-cautious-realistic-unflappable&quot;&gt;def (Cautious, Realistic, Unflappable)&lt;/h3&gt;
+
+&lt;h4 id=&quot;description&quot;&gt;Description&lt;/h4&gt;
+
+&lt;p&gt;This personality must use its shield a lot and walk on the ground. It must not not do anything too aggresive like going off stage. It shouldn’t run and collecting items is too risky. Overall, this is a hard personality to get because many attributes subtract from it and not many add.&lt;/p&gt;
+
+&lt;h4 id=&quot;must-not-have&quot;&gt;Must NOT have&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;offensive&lt;/code&gt; &amp;gt;= 0.26&lt;/p&gt;
+
+&lt;h4 id=&quot;increased-by&quot;&gt;Increased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grounded&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shield master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shield catch master&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;decreased-by&quot;&gt;Decreased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;offensive&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dash&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cliffer&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item throw to target&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dragoon collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smashball collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;special flagger&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;personality-scores&quot;&gt;Personality Scores&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Unflappable&lt;/code&gt; &amp;gt;= 240&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Realistic&lt;/code&gt; &amp;gt;= 180&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cautious&lt;/code&gt; &amp;gt;= 100&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;agl-light-quick-lightning-fast&quot;&gt;agl (Light, Quick, Lightning Fast)&lt;/h3&gt;
+
+&lt;h4 id=&quot;description-1&quot;&gt;Description&lt;/h4&gt;
+
+&lt;p&gt;This personality must move fast. It must be aggressive but not in the air. Collecting items is ok but anything that requires charging or would leave the amiibo in a vulnerable state is too risky.&lt;/p&gt;
+
+&lt;h4 id=&quot;must-have&quot;&gt;Must have&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dash&lt;/code&gt; &amp;gt;= 0.26&lt;/p&gt;
+
+&lt;h4 id=&quot;increased-by-1&quot;&gt;Increased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;offensive&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dash&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dash attacker&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;carrier broker&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;decreased-by-1&quot;&gt;Decreased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;air offensive&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smash holder&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;critical hitter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shield master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hammer collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;special flagger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;homerun batter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;club swinger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;charger&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;personality-scores-1&quot;&gt;Personality Scores&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Lightning Fast&lt;/code&gt; &amp;gt;= 225&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Quick&lt;/code&gt; &amp;gt;= 170&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Light&lt;/code&gt; &amp;gt;= 100&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;ofn-enthusiastic-aggressive-offensive&quot;&gt;ofn (Enthusiastic, Aggressive, Offensive)&lt;/h3&gt;
+
+&lt;h4 id=&quot;description-2&quot;&gt;Description&lt;/h4&gt;
+
+&lt;p&gt;The amiibo must be aggressive and in the face of its opponents. Attacking off stage is encouraged. Items should not be used. If they are picked up, then they should be thrown at an opponent immediately.&lt;/p&gt;
+
+&lt;h4 id=&quot;must-have-1&quot;&gt;Must have&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;near&lt;/code&gt; &amp;gt;= 0.25&lt;/p&gt;
+
+&lt;h4 id=&quot;increased-by-2&quot;&gt;Increased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;near&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;offensive&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;attack out cliff&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dash&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;air offensive&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dash attacker&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meteor master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item throw to target&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;decreased-by-2&quot;&gt;Decreased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feint shooter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dragoon collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smashball collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hammer collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;special flagger&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;personality-scores-2&quot;&gt;Personality Scores&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Offensive&lt;/code&gt; &amp;gt;= 235&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Aggressive&lt;/code&gt; &amp;gt;= 180&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Enthusiastic&lt;/code&gt; &amp;gt;= 100&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;rsk-reckless-thrill-seeker-daredevil&quot;&gt;rsk (Reckless, Thrill Seeker, Daredevil)&lt;/h3&gt;
+
+&lt;h4 id=&quot;description-3&quot;&gt;Description&lt;/h4&gt;
+
+&lt;p&gt;The amiibo must play aggresively off stage, especially dunking. The amiibo should be in the air a lot, preferrable off stage. Melee counter attacks and parries are encouraged but projectile counters are not. Going for risky items is encouraged.&lt;/p&gt;
+
+&lt;h4 id=&quot;must-have-2&quot;&gt;Must have&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;attack out cliff&lt;/code&gt; &amp;gt;= 0.26&lt;/p&gt;
+
+&lt;h4 id=&quot;increased-by-3&quot;&gt;Increased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;near&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;offensive&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;attack out cliff&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;air offensive&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cliffer&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feint master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feint counter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dash attacker&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;critical hitter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meteor masher&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;just shield master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hammer collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;special flagger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;carrier broker&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;decreased-by-3&quot;&gt;Decreased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grounded&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feint shooter&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;personality-scores-3&quot;&gt;Personality Scores&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Daredevil&lt;/code&gt; &amp;gt;= 220&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Thrill Seeker&lt;/code&gt; &amp;gt;= 160&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Reckless&lt;/code&gt; &amp;gt;= 80&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;gen-versatile-tricky-technician&quot;&gt;gen (Versatile, Tricky, Technician)&lt;/h3&gt;
+
+&lt;h4 id=&quot;description-4&quot;&gt;Description&lt;/h4&gt;
+
+&lt;p&gt;This personality must parry. It will show off its skills including countering, parrying, dunking, and using most items.&lt;/p&gt;
+
+&lt;h4 id=&quot;must-have-3&quot;&gt;Must have&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;just shield master&lt;/code&gt; &amp;gt;= 0.26&lt;/p&gt;
+
+&lt;h4 id=&quot;increased-by-4&quot;&gt;Increased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;attack out cliff&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feint master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feint counter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feint shooter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;catcher&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;attack cancel&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meteor masher&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shield master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;just shield master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shield catch master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item throw to target&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dragoon collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smashball collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item swinger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;homerun batter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;club swinger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dash swinger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item shooter&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;decreased-by-4&quot;&gt;Decreased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;air offensive&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;carrier broker&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;personality-scores-4&quot;&gt;Personality Scores&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Technician&lt;/code&gt; &amp;gt;= 150&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Tricky&lt;/code&gt; &amp;gt;= 120&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Versatile&lt;/code&gt; &amp;gt;= 80&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;ent-show-off-flashy-entertainer&quot;&gt;ent (Show-Off, Flashy, Entertainer)&lt;/h3&gt;
+
+&lt;h4 id=&quot;description-5&quot;&gt;Description&lt;/h4&gt;
+
+&lt;p&gt;This personality must taunt a lot. Dunking, charging regular/smash attacks, and parrying are encouraged. Items should be used as intended and not just thrown.&lt;/p&gt;
+
+&lt;h4 id=&quot;must-have-4&quot;&gt;Must have&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appeal&lt;/code&gt; &amp;gt;= 0.25&lt;/p&gt;
+
+&lt;h4 id=&quot;increased-by-5&quot;&gt;Increased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;attack out cliff&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smash holder&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;critical hitter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meteor masher&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;just shield master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dragoon collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smashball collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hammer collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;special flagger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;homerun batter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;club swinger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;death swinger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;charger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appeal&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;decreased-by-5&quot;&gt;Decreased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;100 keeper&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item throw to target&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;personality-scores-5&quot;&gt;Personality Scores&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Entertainer&lt;/code&gt; &amp;gt;= 230&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Flashy&lt;/code&gt; &amp;gt;= 170&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Show-Off&lt;/code&gt; &amp;gt;= 90&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;cau-cool-logical-sly&quot;&gt;cau (Cool, Logical, Sly)&lt;/h3&gt;
+
+&lt;h4 id=&quot;description-6&quot;&gt;Description&lt;/h4&gt;
+
+&lt;p&gt;This personlity must not parry. The amiibo should stay on the ground and use its shield a lot. It should stay far away from its opponents and counter projectiles if necessary. This is also a hard personality to get since many attributes take away from it and not many add to it.&lt;/p&gt;
+
+&lt;h4 id=&quot;must-not-have-1&quot;&gt;Must NOT have&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shield master&lt;/code&gt; &amp;gt;= 0.26&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;increased-by-6&quot;&gt;Increased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grounded&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feint master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feint shooter&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;decreased-by-6&quot;&gt;Decreased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;near&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;offensive&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;attack out cliff&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dash&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;air offensive&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cliffer&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feint counter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smash holder&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dash attacker&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;critical hitter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meteor master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shield master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;just shield master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hammer collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;special flagger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;charger&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;personality-scores-6&quot;&gt;Personality Scores&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Sly&lt;/code&gt; &amp;gt;= 215&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Logical&lt;/code&gt; &amp;gt;= 160&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cool&lt;/code&gt; &amp;gt;= 80&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;dyn-laid-back-wild-lively&quot;&gt;dyn (Laid Back, Wild, Lively)&lt;/h3&gt;
+
+&lt;h4 id=&quot;description-7&quot;&gt;Description&lt;/h4&gt;
+
+&lt;p&gt;This personality is quite different from the others. It has no specific attribute requirement. It’s similar to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rsk&lt;/code&gt; except it doesn’t counter or parry. It should attack a lot, especially off stage. Charging attacks is good. Holding items is strongly encouraged. What’s particularly unusual is it’s discouraged from throwing, swinging, or shooting items. This personality will simply hold items and never use them, except some of the risky weapons.&lt;/p&gt;
+
+&lt;h4 id=&quot;must-have-5&quot;&gt;Must have&lt;/h4&gt;
+
+&lt;p&gt;(Nothing)&lt;/p&gt;
+
+&lt;h4 id=&quot;increased-by-7&quot;&gt;Increased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;offensive&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;attack out cliff&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;air offensive&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smash holder&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dash attacker&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;critical hitter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meteor master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shield master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dragoon collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smashball collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hammer collector&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;special flagger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;homerun batter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;club swinger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;death swinger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;carrier broker&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;charger&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;decreased-by-7&quot;&gt;Decreased by&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;catcher&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;attack cancel&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;just shield master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item throw to target&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item swinger&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item shooter&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;personality-scores-7&quot;&gt;Personality Scores&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Lively&lt;/code&gt; &amp;gt;= 210&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Wild&lt;/code&gt; &amp;gt;= 160&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Laid Back&lt;/code&gt; &amp;gt;= 80&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Robert Brown</name></author><summary type="html">Update</summary></entry><entry><title type="html">The Best Starter Part 2</title><link href="/amiibo/2021/04/14/the-best-starter-part-2.html" rel="alternate" type="text/html" title="The Best Starter Part 2" /><published>2021-04-14T01:34:00+00:00</published><updated>2021-04-14T01:34:00+00:00</updated><id>/amiibo/2021/04/14/the-best-starter-part-2</id><content type="html" xml:base="/amiibo/2021/04/14/the-best-starter-part-2.html">&lt;h2 id=&quot;stats&quot;&gt;Stats&lt;/h2&gt;
+
+&lt;p&gt;As a follow-up to my &lt;a href=&quot;/amiibo/2021/02/23/the-best-starter.html&quot;&gt;previous post&lt;/a&gt;, I ran my Pokémon Trainers to 100 matches each. It took seven weeks to go from 50 to 100. Here are the following results:&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/rob-brown/99dabe2094030882d850400ce7bf547c.js?file=pokemon-trainer-stats.csv&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;I recorded each figure’s stats when Terry, Byleth, and Banjo &amp;amp; Kazooie were released just in case the update and rush of new figures skewed the results. Offhand, there appears to be little difference from the change. Most had their match count in the 80s. Squirtle had already reached 100 at that point.&lt;/p&gt;
+
+&lt;p&gt;I also recorded some notable high points. My Ivysaur topped out at a 29.27 rating. My only other amiibo with a higher rating is my King K. Rool at 30.86 after 50 matches. That’s impressive for a Pokémon Trainer. A large reason for the high rating appears to be that it often wins against three of the top amiibo: Incineroar, Bowser, and King K. Rool.&lt;/p&gt;
+
+&lt;h2 id=&quot;analysis&quot;&gt;Analysis&lt;/h2&gt;
+
+&lt;p&gt;My Pokémon Trainer (PT) Squirtle caught up with my Squirtle. Both Ivysaur figures kept a similar win rate and increased the rating by more than one full point. My Charizard was previously the top-rated of the six. It dropped by more than a full point. This brought it closer but still a full rating point above my PT Charizard.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/rob-brown/99dabe2094030882d850400ce7bf547c.js?file=pokemon-trainer-ratings.csv&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;The two Ivysaur clearly performed the best by a good margin. The two Charizard placed very differently. Splice’s nickname “Gamble Dragon” is fitting. The Squirtle were quite consistent but generally lower than the others fulfilling it’s nickname “Danger Turtle.”&lt;/p&gt;
+
+&lt;p&gt;If you want the best starter, then Ivysaur is the way to go. Perhaps it should be dubbed the “Cabbage Smasher.”&lt;/p&gt;</content><author><name>Robert Brown</name></author><summary type="html">Stats</summary></entry><entry><title type="html">The Best Starter</title><link href="/amiibo/2021/02/23/the-best-starter.html" rel="alternate" type="text/html" title="The Best Starter" /><published>2021-02-23T02:16:00+00:00</published><updated>2021-02-23T02:16:00+00:00</updated><id>/amiibo/2021/02/23/the-best-starter</id><content type="html" xml:base="/amiibo/2021/02/23/the-best-starter.html">&lt;p&gt;Ever since 1996 the question has been posed, “Which Pokémon is the best starter?” Super Smash Bros. Ultimate pushes this further. The Pokémon Trainer character allows choosing Squirtle, Ivysaur, and Charizard as the first Pokémon to come out. For Pokémon Day this year I wanted to find out which of the three starters work best for an amiibo.&lt;/p&gt;
+
+&lt;h2 id=&quot;hypothesis&quot;&gt;Hypothesis&lt;/h2&gt;
+
+&lt;p&gt;The general suggestion for Pokémon Trainer is to choose Ivysaur as the starter. The reasoning is that it takes two switches to get to Squirtle, who is the weakest of the three. Though in a three-stock match, Squirtle will likely come out three times. So it will inevitably come out.&lt;/p&gt;
+
+&lt;p&gt;Squirtle is light and fast. It’s good at getting in some damage but not so much at finishing. Ivysaur hits hard but is a bit slow. It also has poor recovery. But it will switch to Charizard to help recover. Charizard is the strongest of the three with great recovery and a several kill moves, especially, flare blitz. Though Charizard can easily flare blitz off the edge to self destruct.&lt;/p&gt;
+
+&lt;p&gt;My hypothesis is that Squirtle is the best starter. It gets in some quick damage while it’s fresh and unlikely to get knocked out. It then switches to Ivysaur to rack up some more damage. Once it gets knocked off the stage it will switch to Charizard which will then finish the job. At that point Charizard will likely have high damage and get knocked out, switching back to Squirtle and repeating the process.&lt;/p&gt;
+
+&lt;h2 id=&quot;procedure&quot;&gt;Procedure&lt;/h2&gt;
+
+&lt;p&gt;For this experiment I trained a Squirtle amiibo that performs well. I trained one following the &lt;a href=&quot;https://exion-vault.com/2020/08/30/ssbu-amiibo-pokemon_trainer/&quot;&gt;Exion Vault guide&lt;/a&gt;. I specifically did not train it to switch, relying on the built-in AI for switching. This amiibo was able to take out an Incineroar. It has since taken out several Incineroar, King K. Rool, and Bowser.&lt;/p&gt;
+
+&lt;video width=&quot;560&quot; playsinline=&quot;&quot; src=&quot;/assets/vid/charizard-dethrones-incineroar.mp4&quot; controls=&quot;&quot;&gt;&lt;/video&gt;
+
+&lt;p&gt;Once I had a good performing amiibo, I spoofed it to be an Ivysaur and Charizard. These three amiibo start as their respective figures. There’s also a Pokémon Trainer amiibo that can explicitly choose its starter. I made three variations of that amiibo for good measure. These six amiibo are byte-for-byte identical except for the following:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Amiibo ID&lt;/li&gt;
+  &lt;li&gt;Serial Number&lt;/li&gt;
+  &lt;li&gt;Starter (for Pokémon Trainer)&lt;/li&gt;
+  &lt;li&gt;Name (for Pokémon Trainer)&lt;/li&gt;
+  &lt;li&gt;Checksums&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I then put the amiibo on Amiibots and let them compete until they reached 50 matches.&lt;/p&gt;
+
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;/h2&gt;
+
+&lt;p&gt;Here are the rankings after 50 matches ordered by ranking:&lt;/p&gt;
+
+&lt;h3 id=&quot;1-charizard&quot;&gt;#1 Charizard&lt;/h3&gt;
+&lt;p&gt;&lt;img height=&quot;200&quot; src=&quot;/assets/img/charizard-50.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;2-ivysaur&quot;&gt;#2 Ivysaur&lt;/h3&gt;
+&lt;p&gt;&lt;img height=&quot;200&quot; src=&quot;/assets/img/ivysaur-50.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;3-pokémon-trainer-ivysaur&quot;&gt;#3 Pokémon Trainer Ivysaur&lt;/h3&gt;
+&lt;p&gt;&lt;img height=&quot;200&quot; src=&quot;/assets/img/pt-ivysaur-50.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;4-pokémon-trainer-charizard&quot;&gt;#4 Pokémon Trainer Charizard&lt;/h3&gt;
+&lt;p&gt;&lt;img height=&quot;200&quot; src=&quot;/assets/img/pt-charizard-50.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;5-squirtle&quot;&gt;#5 Squirtle&lt;/h3&gt;
+&lt;p&gt;&lt;img height=&quot;200&quot; src=&quot;/assets/img/squirtle-50.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;6-pokémon-trainer-squirtle&quot;&gt;#6 Pokémon Trainer Squirtle&lt;/h3&gt;
+&lt;p&gt;&lt;img height=&quot;200&quot; src=&quot;/assets/img/pt-squirtle-50.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;analysis&quot;&gt;Analysis&lt;/h2&gt;
+
+&lt;p&gt;The scores alone don’t tell the full story. From what I’ve seen, Ivysaur is the clear winner with Charizard in a very close second. Both my Ivysaur performed very well. It wasn’t until nearing 50 that they started dropping off. For example, here’s a ranking at 20 matches:&lt;/p&gt;
+
+&lt;p&gt;&lt;img height=&quot;200&quot; src=&quot;/assets/img/pt-ivysaur-20.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Ivysuar was very close to a 29 ranking many times. Charizard got close a couple times too. The difference likely comes from changes in the amiibo pool. It also seemed to perform less well on Amiibots Zebes, but I haven’t done a thorough analysis on that.&lt;/p&gt;
+
+&lt;p&gt;My hypothesis turned out to be mostly right. My Squirtle played out as I expected. However, some times it stayed as a Squirtle far too long. I haven’t quite figured out what triggers Pokémon Trainer to switch (more ideas on that later). Squirtle did well as long as it followed the cadence. If it stayed Squirtle too long then it would get knocked out late in the Ivysuar phase or early Charizard phase. If the switching can be better controlled, then Squirtle becomes more viable.&lt;/p&gt;
+
+&lt;p&gt;For Ivysaur, it would do some good damage then get knocked off the stage. That would trigger the switch to Charizard. The opponent wasn’t always ready for a KO yet. So Charizard would rack up some more damage and finish. By that point Charizard was fairly damaged, especially from excessive use of flare blitz. If timing went well, it would switch to Squirtle which would be easily knocked out with the high damage. From there, the cycle repeated.&lt;/p&gt;
+
+&lt;p&gt;Charizard is an interesting case. It would often throw away the first of its three stocks. It would use flare blitz too early, causing it to hurt itself early on. The opponent often wasn’t in kill range yet then it would switch to Squirtle. This lead to the worse case scenario for Squirtle: trying to get a kill while it is heavily damaged. It would typically get knocked out. It would then respawn as Ivysaur. From here it played out similarly to the Ivysaur starter described above. With the opponent heavily damaged at this point it was in a strong position to quickly even the stocks.&lt;/p&gt;
+
+&lt;p&gt;In general, Pokémon Trainer appears to be a strong counter against Incineroar, Bowser, and King K. Rool. Those characters may be heavy and hit hard, but they are also big, slow targets. Instead of dodging or shielding, they often rely on their weight to take a blow then hit back harder. Charizard exploits this by rushing in with a powerful flare blitz, finishing them before they can react.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, Pokémon Trainer struggles with smaller, lighter characters like Pichu, Sheik, and Falco. They tend to jump, shield, and dodge more. Many times I’ve seen Charizard flare blitz past an opponent and barely being unable to recover.&lt;/p&gt;
+
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube-nocookie.com/embed/OEPy3FmKgc0&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;p&gt;There is a very stark difference between my Squirtle amiibo and the Pokémon Trainer equivalent. Seeing they are almost identical in every way, they should perform the same. Yet, the two amiibo acted very differently. The Pokémon Trainer variant Squirtle would flare blitz of the stage. It would come back and grab the ledge. It would then jump and flare blitz soaring over the opponent’s head and off the other side of the stage. It would repeat this back and forth across the stage. All the while the opponent just stands there dumbfounded that this Charizard is inflicting self-damage.&lt;/p&gt;
+
+&lt;p&gt;The other five amiibo almost never behaved this way. Here’s a clip:&lt;/p&gt;
+
+&lt;video width=&quot;560&quot; playsinline=&quot;&quot; src=&quot;/assets/vid/jump-flare-blitz2.mp4&quot; controls=&quot;&quot;&gt;&lt;/video&gt;
+
+&lt;p&gt;I have two hypotheses about this behavior:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Different behavior based on amiibo ID.&lt;/li&gt;
+  &lt;li&gt;RNG is seeded based on bytes in the bin file, such as name.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Neither is a strong hypothesis but would be interesting to study further. For example, train a Link amiibo and spoof it for all the different figure variations. Or create several amiibo that are identical except in name (and maybe serial number).&lt;/p&gt;
+
+&lt;h2 id=&quot;pokémon-switching&quot;&gt;Pokémon Switching&lt;/h2&gt;
+
+&lt;p&gt;It’s very clear the amiibo switches from Ivysaur to Charizard when knocked off stage. Other cases are less clear. A time-based switch seems logical. Though there are times it changes very quickly and other times it stays for an unusually long time.&lt;/p&gt;
+
+&lt;p&gt;I’ve noticed Pokémon Trainer frequently switches when the Pokémon gets knocked high in the air near the blast zone. It’s the most reliable indicator I’ve seen anyway.&lt;/p&gt;
+
+&lt;p&gt;I suspect aerial switching may be related to the double-jump behavior jozz noted recentely. Basically jozz noticed that amiibo often will use an aerial jump when you walk under them while they are in the air. This double-jump behavior could trigger something similar to the recovery behavior. An aerial jump won’t save the amiibo since it’s near the blast zone. Instead, it tries switching to see if that gives it a better opportunity. More research is required for this behavior.&lt;/p&gt;
+
+&lt;h2 id=&quot;caveats&quot;&gt;Caveats&lt;/h2&gt;
+
+&lt;p&gt;This is just one instance of an amiibo. Other training methods will perform differently. When training this amiibo, I did not manually switch Pokémon. Teaching a Squirtle amiibo to manually switch may improve it’s performance since it will be less likely to stay a Squirtle for long periods.&lt;/p&gt;
+
+&lt;p&gt;If it’s true that amiibo act differently on different Switches based on how players have played against the AI, then manually switching amiibo may help the amiibo perform more consistently across devices.&lt;/p&gt;
+
+&lt;p&gt;Another caveat is the Amiibots matches aren’t entirely random. The composition of the pool changes over time. Also, the loyalty points allow for some trainers to be picked more frequently. Hopefully that means my amiibo were more likely to play against well-trained amiibo.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Pokémon Trainer is a very interesting and powerful character but is susceptible to RNG. Overall, Ivysaur and Charizard are the best choices but Squirtle can perform well too. I look forward to trying more variations with this amiibo.&lt;/p&gt;</content><author><name>Robert Brown</name></author><summary type="html">Ever since 1996 the question has been posed, “Which Pokémon is the best starter?” Super Smash Bros. Ultimate pushes this further. The Pokémon Trainer character allows choosing Squirtle, Ivysaur, and Charizard as the first Pokémon to come out. For Pokémon Day this year I wanted to find out which of the three starters work best for an amiibo.</summary></entry><entry><title type="html">Amiibo Easter Egg</title><link href="/amiibo/2020/10/12/amiibo-easter-egg.html" rel="alternate" type="text/html" title="Amiibo Easter Egg" /><published>2020-10-12T23:58:00+00:00</published><updated>2020-10-12T23:58:00+00:00</updated><id>/amiibo/2020/10/12/amiibo-easter-egg</id><content type="html" xml:base="/amiibo/2020/10/12/amiibo-easter-egg.html">&lt;p&gt;While delving down into the bits of Amiibo, I found what I believe is an Easter egg in the Amiibo.&lt;/p&gt;
+
+&lt;h2 id=&quot;hexadecimal&quot;&gt;Hexadecimal&lt;/h2&gt;
+
+&lt;p&gt;Before I go further I need to explain different number systems. If you are already familiar with hexadecimal, then feel free to skip this section.&lt;/p&gt;
+
+&lt;p&gt;Typically we work in decimal (base 10). This is likely because we have 10 fingers. There are other number systems frequently used. Computers work in binary (base 2). Effectively all 0s or 1s. Long strings of 0s and 1s are hard to read. By converting binary to hexadecimal (base 16), we can make it more manageable. Hexadecimal uses 0-9 and A-F. This changes one byte from eight binary characters to two hexadecimal characters. To distinguish hexadecimal numbers from decimal numbers, they are often prefixed with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x&lt;/code&gt;, ex. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1234&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;amiibo-character-numbers&quot;&gt;Amiibo Character Numbers&lt;/h2&gt;
+
+&lt;p&gt;Every Amiibo contains eight bytes that identify what character the figurine, card, or plush represents. For the purposes of this post, I’m going to focus on the first two bytes (16 bits).&lt;/p&gt;
+
+&lt;p&gt;The first 12 bits indicate the game series, ex. &lt;a href=&quot;https://amiibo.life/amiibo/super-smash-bros&quot;&gt;Super Mario Bros.&lt;/a&gt; and &lt;a href=&quot;https://amiibo.life/amiibo/the-legend-of-zelda&quot;&gt;Legend of Zelda&lt;/a&gt;. The remaining four bits determine the character. Together these 16 bits are typically the same for Amiibo of the same character. For example, &lt;a href=&quot;https://amiibo.life/amiibo/the-legend-of-zelda/link-link-s-awakening&quot;&gt;Link’s Awakening Link&lt;/a&gt; and &lt;a href=&quot;https://amiibo.life/amiibo/the-legend-of-zelda/link-majora-s-mask&quot;&gt;Majora’s Mask Link&lt;/a&gt; share the same 16 bits (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0100&lt;/code&gt;). The remaining 6 bytes (48 bits) differentiate them from each other.&lt;/p&gt;
+
+&lt;h2 id=&quot;pokémon-character-numbers&quot;&gt;Pokémon Character Numbers&lt;/h2&gt;
+
+&lt;p&gt;Typically, the character numbers are assigned sequentially. For example, the Super Mario Bros. series starts with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x000&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x002&lt;/code&gt;. The first several characters look like this:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Character&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Number&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mario&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0000&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Luigi&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0001&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Peach&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0002&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Yoshi&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0003&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Rosalina and Luma&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0004&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bowser&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0005&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Bowser Jr.&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0006&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Wario&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0007&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Donkey Kong&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0008&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Diddy Kong&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x0009&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The Pokémon series doesn’t follow that pattern. Let’s look at a few of them:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Character&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Number&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ivysaur&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1902&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Charizard&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1906&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Squirtle&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1907&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;2, 6, and 7 are not sequential but any longtime Pokémon fan will recognize them. They are the national Pokédex numbers for those Pokémon.&lt;/p&gt;
+
+&lt;p&gt;Let’s look at the other Pokémon and subtract &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1900&lt;/code&gt; from each of their numbers.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Character&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Number&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Number - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1900&lt;/code&gt;&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;National Pokédex&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ivysaur&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1902&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Charizard&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1906&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Squirtle&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1907&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Pikachu&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1919&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;25&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;25&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Jigglypuff&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1927&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;39&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;39&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mewtwo&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1996&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;150&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;150&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Pichu&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x19AC&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;172&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;172&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Lucario&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1AC0&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;448&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;448&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Greninja&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1B92&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;658&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;658&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Incineroar&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1BD7&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;727&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;727&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;It’s a perfect match.&lt;/p&gt;
+
+&lt;p&gt;You may claim this is just careful organizing, not an Easter egg. It probably is. Though it’s a lot of wasted assignable numbers for Pokémon that haven’t been released. The only good reason I can see to do this would be if Nintendo released a large number of Pokémon Amiibo. This could be done through cards like the &lt;a href=&quot;https://amiibo.life/amiibo/animal-crossing-cards-series-1&quot;&gt;Animal Crossing cards&lt;/a&gt;. It would be interesting to see &lt;a href=&quot;https://en.wikipedia.org/wiki/Pokémon_Trading_Card_Game&quot;&gt;Pokémon TCG cards&lt;/a&gt; scannable as Amiibo.&lt;/p&gt;
+
+&lt;h2 id=&quot;one-more-thing&quot;&gt;One More Thing&lt;/h2&gt;
+
+&lt;p&gt;Here’s the thing that really caught my attention. Does &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1900&lt;/code&gt; have any significance? Look through the character numbers again and one might stand out. Mewtwo’s character number is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1996&lt;/code&gt;. Any longtime Pokémon fan will recognize that number. 1996 is the &lt;a href=&quot;https://en.wikipedia.org/wiki/Pokémon_Red_and_Blue&quot;&gt;year Pokémon Red, Green, and Blue released in Japan&lt;/a&gt;. This could be complete coincidence, especially with it being Mewtwo of all Pokémon. Still it’s too good to ignore.&lt;/p&gt;
+
+&lt;h2 id=&quot;wait-what-about-pokémon-trainer&quot;&gt;Wait, What About Pokémon Trainer?&lt;/h2&gt;
+
+&lt;p&gt;Actually, there are three Amiibo I haven’t mentioned: &lt;a href=&quot;https://amiibo.life/amiibo/super-smash-bros/pokemon-trainer&quot;&gt;Pokémon Trainer&lt;/a&gt;, &lt;a href=&quot;https://amiibo.life/amiibo/pokemon/shadow-mewtwo&quot;&gt;Shadow Mewtwo&lt;/a&gt;, and &lt;a href=&quot;https://amiibo.life/amiibo/pokemon/detective-pikachu&quot;&gt;Detective Pikachu&lt;/a&gt;. They don’t fit the convention of the other Amiibo.&lt;/p&gt;
+
+&lt;p&gt;Personally I would have assigned Pokémon Trainer the number &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1900&lt;/code&gt;. That would avoid interfering with Pokédex numbers. Instead Nintendo assigned him the number &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1D40&lt;/code&gt;. Subtracting &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1900&lt;/code&gt; gives &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x440&lt;/code&gt; or 1088. I don’t see any significance to those numbers. At the time of this writing, the highest national Pokédex number is &lt;a href=&quot;https://bulbapedia.bulbagarden.net/wiki/Zarude_%28Pokémon%29&quot;&gt;Zarude at 893&lt;/a&gt;. Give it a few years and we may have a conflict on this number.&lt;/p&gt;
+
+&lt;p&gt;The Shadow Mewtwo card and Detective Pikachu figurine are particularly unusual. Nintendo assigned them the numbers &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1D00&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1D01&lt;/code&gt;, respectively. Typically Nintendo assigns the same character number to different Amiibo even if they come from different Amiibo series. For example, the &lt;a href=&quot;https://amiibo.life/amiibo/skylanders-superchargers/hammer-slam-bowser&quot;&gt;Hammer Slam Bowser figurine&lt;/a&gt; from the &lt;a href=&quot;https://amiibo.life/amiibo/skylanders-superchargers&quot;&gt;Skylanders SuperChargers series&lt;/a&gt; has the character number &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x005&lt;/code&gt; matching the &lt;a href=&quot;https://amiibo.life/amiibo/super-mario/bowser&quot;&gt;Bowser&lt;/a&gt; and &lt;a href=&quot;https://amiibo.life/amiibo/super-mario/bowser-wedding-outfit&quot;&gt;Wedding Bowser&lt;/a&gt; figurines from the Super Mario Bros. series.&lt;/p&gt;
+
+&lt;p&gt;Another oddity is that Shadow Mewtwo and Detective Pikachu don’t work as trainable Amiibo in Super Smash Bros. Ultimate. Scanning Shadow Mewtwo disappointingly does nothing and Detective Pikachu gives you a spirit as consolation.&lt;/p&gt;
+
+&lt;p&gt;Calculating &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1D00&lt;/code&gt; - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1900&lt;/code&gt; gives 1024. Detective Pikachu is one later at 1025. These are also outside the current national Pokédex. Any programmer will quickly notice that 1024 is a power of 2 (2^10). Outside of that I see no significance.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;This post is already longer than I anticipated. I hope you enjoy this fun discovery hidden in the depths of Amiibo.&lt;/p&gt;</content><author><name>Robert Brown</name></author><summary type="html">While delving down into the bits of Amiibo, I found what I believe is an Easter egg in the Amiibo.</summary></entry><entry><title type="html">Amiibo Personality Research</title><link href="/posts/amiibo-personality-research" rel="alternate" type="text/html" title="Amiibo Personality Research" /><published>2020-09-13T18:41:00+00:00</published><updated>2020-09-13T18:41:00+00:00</updated><id>/posts/amiibo-personality-research</id><content type="html" xml:base="/posts/amiibo-personality-research">&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;Amiibo work by randomly selecting moves. By emphasizing effective moves and punishing ineffective moves, we influence the probability distributions of which moves are chosen. As said in The Hunger Games the phrase “May the odds be ever in your favor” is aptly applicable to Amiibo. We can’t make a perfect Amiibo but we can push the odds as far in our favor as possible.&lt;/p&gt;
+
+&lt;p&gt;An Amiibo’s behavior is defined by two parts: move set and personality. When asked about personalities, the immediate responses are often “personality doesn’t matter” or “you can win with any personality.” The reasoning: how ever you train an Amiibo a suitable personality will follow. This is a very pragmatic approach. But what about an empirical approach?&lt;/p&gt;
+
+&lt;p&gt;The question remains is this really the best way to find a personality? Or is it a local maximum? There are several personalities that are hard to get without spirits so they are rarely seen. Could we push the odds 10% (or even 1%) in our favor by choosing a different personality?&lt;/p&gt;
+
+&lt;h2 id=&quot;procedure&quot;&gt;Procedure&lt;/h2&gt;
+
+&lt;p&gt;To better understand how personalities work, I devised the following experiment. It’s designed to limit as many variables as possible.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Create 8 Amiibo of the same character.&lt;/li&gt;
+  &lt;li&gt;Reset each Amiibo.&lt;/li&gt;
+  &lt;li&gt;Use spirits to create each of the personalities (ignoring Normal).&lt;/li&gt;
+  &lt;li&gt;Scrub the Amiibo of any spirit stats (type, attack, defense).&lt;/li&gt;
+  &lt;li&gt;Disable learning.&lt;/li&gt;
+  &lt;li&gt;Copy the move set from a known, good Amiibo into each Amiibo.&lt;/li&gt;
+  &lt;li&gt;Play each of the personalities against each other on Final Destination in a first to 5 wins match with three stocks.&lt;/li&gt;
+  &lt;li&gt;Collect the stats.&lt;/li&gt;
+  &lt;li&gt;Back out to the menu between matches to ensure any learning is cleared.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;You’ll notice I only created 8 Amiibo instead of 24 or 25. This is due to two things. First, without an Amiibots-like automated setup, running lots of matches is not reasonable. Having 24 Amiibo play each other would result in 276 matches. Using 8 only requires 28 matches, roughly a 90% reduction.&lt;/p&gt;
+
+&lt;p&gt;Second, the personalities are related. This flowchart from &lt;a href=&quot;https://twitter.com/ArklaineGenesis/status/1108550519847415808&quot;&gt;ArklaineGenesis&lt;/a&gt; shows how spirits can be used to change to different personalities.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://tricksofthetrade.pro/images/amiibo-personality-guide.png&quot; width=&quot;700&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Though when I ran through the process myself, I found an error. I was unable to get Thrill Seeker from Enthusiastic. I was able to get Thrill Seeker from Reckless. That leads me to believe the main personality branches look like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://tricksofthetrade.pro/images/amiibo-personality-main-branches.png&quot; width=&quot;700&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;It has a nice symmetry to it. There are eight personalities with three different variations. As an aside, each character conveniently has three different skins. This made it easier to identify the Amiibo I created, along with naming them with the personalities.&lt;/p&gt;
+
+&lt;p&gt;It’s simple to confirm these branches. If you start with a fresh Amiibo, look for a spirit that moves it from Normal to the first stage of a branch. If you give the Amiibo three of these spirits total, you should end up with the final stage of the branch.&lt;/p&gt;
+
+&lt;p&gt;For this experiment I chose the 8 final stage personalities:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Daredevil&lt;/li&gt;
+  &lt;li&gt;Entertainer&lt;/li&gt;
+  &lt;li&gt;Lightning Fast&lt;/li&gt;
+  &lt;li&gt;Lively&lt;/li&gt;
+  &lt;li&gt;Offensive&lt;/li&gt;
+  &lt;li&gt;Sly&lt;/li&gt;
+  &lt;li&gt;Technician&lt;/li&gt;
+  &lt;li&gt;Unflappable&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These personalities should be the most distinct.&lt;/p&gt;
+
+&lt;p&gt;As for the character, I chose Link for several reasons:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Link is my main and I know him best.&lt;/li&gt;
+  &lt;li&gt;He is a high-tier Amiibo and one of the most common in tournaments.&lt;/li&gt;
+  &lt;li&gt;I have trained a Link Amiibo that performs decently.&lt;/li&gt;
+  &lt;li&gt;Link has a wide range of attacks: grounded/aerial and melee/range with lots of kill options. He even has items. Any personality should find a home with Link.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;There are some caveats with this experiment.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Different move sets may work better with different personalities.&lt;/li&gt;
+  &lt;li&gt;Different Amiibo may work better with different personalities.&lt;/li&gt;
+  &lt;li&gt;These matches were Link vs. Link. Other personalities may work better against different characters.&lt;/li&gt;
+  &lt;li&gt;Theses were vanilla matches. Spirits could change the results.&lt;/li&gt;
+  &lt;li&gt;Even with first to five wins there weren’t many rounds run.&lt;/li&gt;
+  &lt;li&gt;The final stage personalities may be so specialized they aren’t as effective. The first or second stage personalities may be more balanced.&lt;/li&gt;
+  &lt;li&gt;Personality labels are not granular. There are many underlying stats, ex. Aggression, Defensiveness, Edgeguard, Anticipation, and many more. Several of those are two bytes each. That gives over 65,000 possible values for each stat. Even within one personality there is a lot of variation.&lt;/li&gt;
+  &lt;li&gt;This means giving different spirits likely would have given slightly different personalities.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;analysis&quot;&gt;Analysis&lt;/h2&gt;
+
+&lt;p&gt;Enough about the procedure. Let’s look at the results.&lt;/p&gt;
+
+&lt;p&gt;For each match I recorded wins/loses, KOs/falls, and damage given/received. From that I derived several key metrics.&lt;/p&gt;
+
+&lt;p&gt;The full data set is &lt;a href=&quot;https://gist.github.com/rob-brown/50463be906f7d6d98d54a58d0acc5dea&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;match-wins&quot;&gt;Match Wins&lt;/h3&gt;
+
+&lt;p&gt;How many first-to-five matches the personality won.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/rob-brown/50463be906f7d6d98d54a58d0acc5dea.js?file=rank-by-match-wins.csv&quot;&gt;&lt;/script&gt;
+
+&lt;h3 id=&quot;win-rate&quot;&gt;Win Rate&lt;/h3&gt;
+
+&lt;p&gt;Matches won to total games.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/rob-brown/50463be906f7d6d98d54a58d0acc5dea.js?file=rank-by-win-rate.csv&quot;&gt;&lt;/script&gt;
+
+&lt;h3 id=&quot;damage-given-per-game&quot;&gt;Damage Given Per Game&lt;/h3&gt;
+
+&lt;p&gt;Average damage per game.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/rob-brown/50463be906f7d6d98d54a58d0acc5dea.js?file=rank-by-damage-given-per-game.csv&quot;&gt;&lt;/script&gt;
+
+&lt;h3 id=&quot;damage-given-per-ko&quot;&gt;Damage Given Per KO&lt;/h3&gt;
+
+&lt;p&gt;Average damage a personality did to get kill. Lower is better. This metric may be more important than damager per game. This means a personality can get kills sooner.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/rob-brown/50463be906f7d6d98d54a58d0acc5dea.js?file=rank-by-damage-given-per-ko.csv&quot;&gt;&lt;/script&gt;
+
+&lt;h3 id=&quot;damage-received-per-fall&quot;&gt;Damage Received Per Fall&lt;/h3&gt;
+
+&lt;p&gt;Average damage before dying. Higher is better. Shows how long a personality can survive.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/rob-brown/50463be906f7d6d98d54a58d0acc5dea.js?file=rank-by-damage-received-per-fall.csv&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;Surprisingly, the more aggressive personalities survived longest.&lt;/p&gt;
+
+&lt;h3 id=&quot;kos-per-game&quot;&gt;KOs Per Game&lt;/h3&gt;
+
+&lt;p&gt;Average number of kills per game. For a three-stock game, closer to 3 is best.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/rob-brown/50463be906f7d6d98d54a58d0acc5dea.js?file=rank-by-kos-per-game.csv&quot;&gt;&lt;/script&gt;
+
+&lt;h3 id=&quot;kos-per-fall&quot;&gt;KOs Per Fall&lt;/h3&gt;
+
+&lt;p&gt;Number of kills per own death. Greater than 1 is good.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/rob-brown/50463be906f7d6d98d54a58d0acc5dea.js?file=rank-by-kos-per-fall.csv&quot;&gt;&lt;/script&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;The Offensive personality is a clear winner with Lightning Fast in a close second. Offensive is top is every metric except one. Lightning Fast was able to kill at a slightly lower damage on average.&lt;/p&gt;
+
+&lt;p&gt;Sly only won a single game. It played too safely and just wasn’t able to get reliable kills. These personalities show the best defense is a good offense.&lt;/p&gt;
+
+&lt;p&gt;Clearly personality does matter. Most people I’ve talked to end up with an Enthusiastic personality. With Enthusiastic in the Offensive branch, they are already in a good position. This could explain the sentiment that personality doesn’t matter. If you always end up with a personality optimized for kills then you can focus more on tuning an Amiibo’s move set. Again, it’s a very pragmatic strategy.&lt;/p&gt;
+
+&lt;p&gt;This research would not have been possible without all the modders out there, especially fudgepop01. Thank you for your contributions to the Amiibo community.&lt;/p&gt;</content><author><name>Robert Brown</name></author><summary type="html">Summary</summary></entry><entry><title type="html">Building Blocks: Agent</title><link href="/2018/09/01/building-blocks-agent.html" rel="alternate" type="text/html" title="Building Blocks: Agent" /><published>2018-09-01T03:24:00+00:00</published><updated>2018-09-01T03:24:00+00:00</updated><id>/2018/09/01/building-blocks-agent</id><content type="html" xml:base="/2018/09/01/building-blocks-agent.html">&lt;p&gt;I’ve long been an advocate of simple building blocks that are trivial to understand and implement. Despite their small size, they enable simpler development. Many that I have written are published on my &lt;a href=&quot;https://github.com/rob-brown&quot;&gt;GitHub account&lt;/a&gt;. Today I want to share my most used building block: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Agent&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Agent&lt;/code&gt; comes from &lt;a href=&quot;https://hexdocs.pm/elixir/Agent.html&quot;&gt;Elixir’s module of the same name&lt;/a&gt;. It is a thread-safe encapsulation around arbitrary state. Since I use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Agent&lt;/code&gt; all the time in Elixir, I found myself wanting for it in other languages.&lt;/p&gt;
+
+&lt;p&gt;So, let’s implement an agent in Swift. Here is the basic type definition and constructor.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import Foundation
+
+public final class SimpleAgent&amp;lt;State&amp;gt; {
+    private var state: State
+    private let queue: DispatchQueue
+
+    public init(state: State) {
+        self.state = state
+        self.queue = DispatchQueue(label: &quot;pro.tricksofthetrade.SimpleAgent&quot;, qos: .userInitiated)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We can see that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SimpleAgent&lt;/code&gt; holds some generic state. It also has a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DispatchQueue&lt;/code&gt;. This is where the thread safety comes in. I’m going to assume you are familiar enough with Grand Central Dispatch (GCD).&lt;/p&gt;
+
+&lt;p&gt;Before continuing, you should note that it’s best that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;State&lt;/code&gt; be immutable. I prefer to do this with a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;struct&lt;/code&gt; that only has &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;let&lt;/code&gt; properties that are also immutable. Having immutable data makes it impossible to mutate the data in an unsafe way.&lt;/p&gt;
+
+&lt;p&gt;An agent effectively has two operations: get and set. Let’s start with getting data.&lt;/p&gt;
+
+&lt;p&gt;Fetching the data does the following:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Synchronously run a closure on the dispatch queue.&lt;/li&gt;
+  &lt;li&gt;Call the given closure with the current state.&lt;/li&gt;
+  &lt;li&gt;The closure returns the subset of data it wants.&lt;/li&gt;
+  &lt;li&gt;Return the result to the caller.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;And here is the code.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;public func fetch&amp;lt;Result&amp;gt;(closure: ((State) -&amp;gt; Result)) -&amp;gt; Result {
+    var result: Result!
+    queue.sync {
+        result = closure(self.state)
+    }
+    return result
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that an implicitly unwrapped optional must be used here because the Swift compiler is not yet smart enough to know that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;result&lt;/code&gt; is always written to before it is read.&lt;/p&gt;
+
+&lt;p&gt;Now for updating the state. It works similarly to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fetch&lt;/code&gt; function.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Asynchronously run a closure on the dispatch queue.&lt;/li&gt;
+  &lt;li&gt;Call the given closure with the current state.&lt;/li&gt;
+  &lt;li&gt;The closure returns the new data to store.&lt;/li&gt;
+  &lt;li&gt;Update the internal state.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;And here is the code.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;public func update(closure: @escaping (State) -&amp;gt; State) {
+    queue.async {
+        self.state = closure(self.state)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The code could just as easily use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;queue.sync&lt;/code&gt;. There’s no need to wait around for the update to complete, so &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;queue.async&lt;/code&gt; is typically the desired behavior.&lt;/p&gt;
+
+&lt;p&gt;There is one more operation we need. There are times we want to both get and update the data. It is not safe for the caller to fetch the data, change it, then set it. That can lead to race conditions. So, let’s build an operation that does both at the same time.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;public func fetchAndUpdate&amp;lt;Result&amp;gt;(closure: (State) -&amp;gt; (Result, State)) -&amp;gt; Result {
+    var result: Result!
+    queue.sync {
+        let (returnValue, newState) = closure(self.state)
+        self.state = newState
+        result = returnValue
+    }
+    return result
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s it. In total, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SimpleAgent&lt;/code&gt; is 36 lines of code, including blank lines. Any Swift developer should be able to look at this code and understand it within a few minutes. Plus you now have a powerful building block for building bigger building blocks such as actors, state machines, and futures. Or it can be used as is.&lt;/p&gt;</content><author><name>Robert Brown</name></author><summary type="html">I’ve long been an advocate of simple building blocks that are trivial to understand and implement. Despite their small size, they enable simpler development. Many that I have written are published on my GitHub account. Today I want to share my most used building block: Agent.</summary></entry><entry><title type="html">Building Blocks: Pure State Machine</title><link href="/2018/08/31/building-blocks-pure-state-machine.html" rel="alternate" type="text/html" title="Building Blocks: Pure State Machine" /><published>2018-08-31T04:12:00+00:00</published><updated>2018-08-31T04:12:00+00:00</updated><id>/2018/08/31/building-blocks-pure-state-machine</id><content type="html" xml:base="/2018/08/31/building-blocks-pure-state-machine.html">&lt;p&gt;Previously I wrote about my &lt;a href=&quot;#posts/building-blocks-agent&quot;&gt;most common building block: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Agent&lt;/code&gt;&lt;/a&gt;. Today I’m going to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Agent&lt;/code&gt; to make a bigger building block, namely a pure &lt;a href=&quot;https://en.wikipedia.org/wiki/Finite-state_machine&quot;&gt;state machine&lt;/a&gt;. It’s implementation is inspired by &lt;a href=&quot;http://elm-lang.org&quot;&gt;Elm&lt;/a&gt; and &lt;a href=&quot;https://gist.github.com/andymatuschak/d5f0a8730ad601bcccae97e8398e25b2&quot;&gt;Andy Matuschak&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Before continuing, note that “pure” means the state machine is mathematically pure. Or in other words given the same outputs it will &lt;em&gt;always&lt;/em&gt; produce the same outputs. This makes testing the state machine trivial.&lt;/p&gt;
+
+&lt;p&gt;Let’s start with the basic type definition and constructor.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import Foundation
+
+public final class SimplePureStateMachine&amp;lt;State, Action, Command&amp;gt; {
+public typealias ActionHandler = (State, Action) -&amp;gt; (State, Command)
+
+private let state: SimpleAgent&amp;lt;State&amp;gt;
+private let handler: ActionHandler
+
+public init(initialState: State, handler: @escaping ActionHandler) {
+    self.state = SimpleAgent(state: initialState)
+    self.handler = handler
+}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The state is stored in the &lt;a href=&quot;#posts/building-blocks-agent&quot;&gt;agent created previously&lt;/a&gt;. This ensures updates are thread safe.&lt;/p&gt;
+
+&lt;p&gt;The most notable part of the type definition is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ActionHandler&lt;/code&gt;. It’s simply a function. As input, it receives the current state and an action (sometimes called an event or message). The action represents an operation to be performed on the state. I typically implement actions as a Swift &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;enum&lt;/code&gt;. Here’s an example:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;public enum BluetoothAction {
+case bluetoothPoweredOn
+case bluetoothPoweredOff
+case startScan
+case stopScan
+case scanTimedOut
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As output, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ActionHandler&lt;/code&gt; returns new state and a command (sometimes called an effect). The command represents any side effects the state machine would like performed on its behalf. Since the state machine is pure, it can’t do things like performing network requests or access a database. Some external entity will receive the commands, perform them, and report back to the state machine with an action.&lt;/p&gt;
+
+&lt;p&gt;For those interested, this type of state machine is known as a &lt;a href=&quot;https://en.wikipedia.org/wiki/Finite-state_machine#Transducers&quot;&gt;Mealy machine&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now that you are thoroughly lost in the theory, let’s actually implement the rest of the state machine. It turns out there is only one function left to implement: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;handleAction&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;public func handleAction(_ action: Action) -&amp;gt; Command {
+return state.fetchAndUpdate {
+    let (newState, command) = self.handler($0, action)
+    return (command, newState)
+}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s it. All the real work is done by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SimpleAgent&lt;/code&gt; and the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ActionHandler&lt;/code&gt;. This leaves &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SimplePureStateMachine&lt;/code&gt; weighing in at a whopping 24 lines, including blank lines.&lt;/p&gt;
+
+&lt;p&gt;Before I conclude, I’ll demonstrate &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SimplePureStateMachine&lt;/code&gt;. That will help clear up the mystery behind &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ActionHandler&lt;/code&gt;. For this example, I will make a simple coin-operated turnstile.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;enum TurnstileState {
+case locked
+case unlocked
+}
+
+enum TurnstileAction {
+case insertToken
+case admitPerson
+}
+
+enum TurnstileCommand {
+case lock
+case unlock
+case ejectToken
+case notifySecurity
+}
+
+let turnstile = SimplePureStateMachine&amp;lt;TurnstileState, TurnstileAction, TurnstileCommand&amp;gt;(initialState: .locked) { state, action in
+switch (state, action) {
+case (.locked, .insertToken):
+    return (.unlocked, .unlock)
+
+case (.locked, .admitPerson):
+    return (.locked, .notifySecurity)
+
+case (.unlocked, .admitPerson):
+    return (.locked, .lock)
+
+case (.unlocked, .insertToken):
+    return (.unlocked, .ejectToken)
+}
+}
+
+turnstile.handleAction(.insertToken)   // Command: unlock
+turnstile.handleAction(.admitPerson)   // Command: lock
+turnstile.handleAction(.admitPerson)   // Command: notifySecurity
+turnstile.handleAction(.insertToken)   // Command: unlock
+turnstile.handleAction(.insertToken)   // Command: ejectToken
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Again, the great win with a pure state machine is the logic can be tested without any side effects such as inadvertedly alerting security. Also, the state machine doesn’t care how the side effects are implemented. This leaves us free to change that detail however and whenever we want without chaning the state machine. Now that’s modularity.&lt;/p&gt;</content><author><name>Robert Brown</name></author><summary type="html">Previously I wrote about my most common building block: Agent. Today I’m going to use Agent to make a bigger building block, namely a pure state machine. It’s implementation is inspired by Elm and Andy Matuschak.</summary></entry><entry><title type="html">TIL: Sorting by Multiple Keys in Elixir</title><link href="/2018/01/05/sorting-multiple-keys-in-elixir.html" rel="alternate" type="text/html" title="TIL: Sorting by Multiple Keys in Elixir" /><published>2018-01-05T03:30:00+00:00</published><updated>2018-01-05T03:30:00+00:00</updated><id>/2018/01/05/sorting-multiple-keys-in-elixir</id><content type="html" xml:base="/2018/01/05/sorting-multiple-keys-in-elixir.html">&lt;p&gt;While working on &lt;a href=&quot;http://adventofcode.com&quot;&gt;Advent of Code 2017&lt;/a&gt; I inadvertedly discovered how to sort collections by multiple keys. In the past, I’ve always written elaborate functions like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;contacts
+|&amp;gt; Enum.sort(fn x, y -&amp;gt;
+  if x.last_name == y.last_name do
+    x.first_name &amp;lt; y.first_name
+  else
+    x.last_name &amp;lt; y.last_name
+  end
+end)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now I’ve found a simpler solution.&lt;/p&gt;
+
+&lt;p&gt;In the example above we have a list of contacts to sort by last name then first name. We can do so like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;contacts
+|&amp;gt; Enum.sort_by(&amp;amp;{&amp;amp;1.last_name, &amp;amp;1.first_name})
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s it. Just return a tuple with the list of values to sort by. (Note, this example uses &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sort_by&lt;/code&gt; instead of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sort&lt;/code&gt;.) If two contacts have the same last name, then the first names will be compared. This can be done for any number of values.&lt;/p&gt;
+
+&lt;p&gt;This works with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;min&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;max&lt;/code&gt; too.&lt;/p&gt;
+
+&lt;p&gt;The down side of this approach is that it assumes that you want an ascending or descending sort for all the listed values. In general, you must use an elaborate function to handle mixed sort orders.&lt;/p&gt;
+
+&lt;p&gt;There is a special case for numbers though. Let’s say you have a list of games and you want the game with the highest score. However, if two or more games have the same highest score, you want the first game to achieve that score. You can do so like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;games
+|&amp;gt; Stream.with_index
+|&amp;gt; Enum.max_by(fn {x, n} -&amp;gt; {x.score, -n} end)
+|&amp;gt; elem(0)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Basically, the index is multiplied by -1 to get the minimum.&lt;/p&gt;
+
+&lt;p&gt;Sorting is a common operation and it doesn’t need to be complicated.&lt;/p&gt;</content><author><name>Robert Brown</name></author><summary type="html">While working on Advent of Code 2017 I inadvertedly discovered how to sort collections by multiple keys. In the past, I’ve always written elaborate functions like this:</summary></entry></feed>

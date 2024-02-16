@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Amiibo Easter Egg | Tricks of the Trade</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Amiibo Easter Egg" />
+<meta name="author" content="Robert Brown" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="While delving down into the bits of Amiibo, I found what I believe is an Easter egg in the Amiibo." />
+<meta property="og:description" content="While delving down into the bits of Amiibo, I found what I believe is an Easter egg in the Amiibo." />
+<link rel="canonical" href="/amiibo/2020/10/12/amiibo-easter-egg.html" />
+<meta property="og:url" content="/amiibo/2020/10/12/amiibo-easter-egg.html" />
+<meta property="og:site_name" content="Tricks of the Trade" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-10-12T23:58:00+00:00" />
+<script type="application/ld+json">
+{"datePublished":"2020-10-12T23:58:00+00:00","author":{"@type":"Person","name":"Robert Brown"},"dateModified":"2020-10-12T23:58:00+00:00","description":"While delving down into the bits of Amiibo, I found what I believe is an Easter egg in the Amiibo.","url":"/amiibo/2020/10/12/amiibo-easter-egg.html","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"/amiibo/2020/10/12/amiibo-easter-egg.html"},"headline":"Amiibo Easter Egg","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Tricks of the Trade" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Tricks of the Trade</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about">About</a><a class="page-link" href="/hire-me">Hire Me</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Amiibo Easter Egg</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2020-10-12T23:58:00+00:00" itemprop="datePublished">Oct 12, 2020
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Robert Brown</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>While delving down into the bits of Amiibo, I found what I believe is an Easter egg in the Amiibo.</p>
+
+<h2 id="hexadecimal">Hexadecimal</h2>
+
+<p>Before I go further I need to explain different number systems. If you are already familiar with hexadecimal, then feel free to skip this section.</p>
+
+<p>Typically we work in decimal (base 10). This is likely because we have 10 fingers. There are other number systems frequently used. Computers work in binary (base 2). Effectively all 0s or 1s. Long strings of 0s and 1s are hard to read. By converting binary to hexadecimal (base 16), we can make it more manageable. Hexadecimal uses 0-9 and A-F. This changes one byte from eight binary characters to two hexadecimal characters. To distinguish hexadecimal numbers from decimal numbers, they are often prefixed with <code class="language-plaintext highlighter-rouge">0x</code>, ex. <code class="language-plaintext highlighter-rouge">0x1234</code>.</p>
+
+<h2 id="amiibo-character-numbers">Amiibo Character Numbers</h2>
+
+<p>Every Amiibo contains eight bytes that identify what character the figurine, card, or plush represents. For the purposes of this post, I’m going to focus on the first two bytes (16 bits).</p>
+
+<p>The first 12 bits indicate the game series, ex. <a href="https://amiibo.life/amiibo/super-smash-bros">Super Mario Bros.</a> and <a href="https://amiibo.life/amiibo/the-legend-of-zelda">Legend of Zelda</a>. The remaining four bits determine the character. Together these 16 bits are typically the same for Amiibo of the same character. For example, <a href="https://amiibo.life/amiibo/the-legend-of-zelda/link-link-s-awakening">Link’s Awakening Link</a> and <a href="https://amiibo.life/amiibo/the-legend-of-zelda/link-majora-s-mask">Majora’s Mask Link</a> share the same 16 bits (<code class="language-plaintext highlighter-rouge">0x0100</code>). The remaining 6 bytes (48 bits) differentiate them from each other.</p>
+
+<h2 id="pokémon-character-numbers">Pokémon Character Numbers</h2>
+
+<p>Typically, the character numbers are assigned sequentially. For example, the Super Mario Bros. series starts with <code class="language-plaintext highlighter-rouge">0x000</code> to <code class="language-plaintext highlighter-rouge">0x002</code>. The first several characters look like this:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Character</th>
+      <th style="text-align: left">Number</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Mario</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x0000</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Luigi</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x0001</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Peach</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x0002</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Yoshi</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x0003</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Rosalina and Luma</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x0004</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Bowser</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x0005</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Bowser Jr.</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x0006</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Wario</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x0007</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Donkey Kong</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x0008</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Diddy Kong</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x0009</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The Pokémon series doesn’t follow that pattern. Let’s look at a few of them:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Character</th>
+      <th style="text-align: left">Number</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Ivysaur</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x1902</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Charizard</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x1906</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Squirtle</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x1907</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>2, 6, and 7 are not sequential but any longtime Pokémon fan will recognize them. They are the national Pokédex numbers for those Pokémon.</p>
+
+<p>Let’s look at the other Pokémon and subtract <code class="language-plaintext highlighter-rouge">0x1900</code> from each of their numbers.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Character</th>
+      <th style="text-align: left">Number</th>
+      <th style="text-align: right">Number - <code class="language-plaintext highlighter-rouge">0x1900</code></th>
+      <th style="text-align: right">National Pokédex</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Ivysaur</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x1902</code></td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">2</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Charizard</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x1906</code></td>
+      <td style="text-align: right">6</td>
+      <td style="text-align: right">6</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Squirtle</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x1907</code></td>
+      <td style="text-align: right">7</td>
+      <td style="text-align: right">7</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Pikachu</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x1919</code></td>
+      <td style="text-align: right">25</td>
+      <td style="text-align: right">25</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Jigglypuff</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x1927</code></td>
+      <td style="text-align: right">39</td>
+      <td style="text-align: right">39</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Mewtwo</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x1996</code></td>
+      <td style="text-align: right">150</td>
+      <td style="text-align: right">150</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Pichu</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x19AC</code></td>
+      <td style="text-align: right">172</td>
+      <td style="text-align: right">172</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Lucario</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x1AC0</code></td>
+      <td style="text-align: right">448</td>
+      <td style="text-align: right">448</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Greninja</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x1B92</code></td>
+      <td style="text-align: right">658</td>
+      <td style="text-align: right">658</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Incineroar</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0x1BD7</code></td>
+      <td style="text-align: right">727</td>
+      <td style="text-align: right">727</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>It’s a perfect match.</p>
+
+<p>You may claim this is just careful organizing, not an Easter egg. It probably is. Though it’s a lot of wasted assignable numbers for Pokémon that haven’t been released. The only good reason I can see to do this would be if Nintendo released a large number of Pokémon Amiibo. This could be done through cards like the <a href="https://amiibo.life/amiibo/animal-crossing-cards-series-1">Animal Crossing cards</a>. It would be interesting to see <a href="https://en.wikipedia.org/wiki/Pokémon_Trading_Card_Game">Pokémon TCG cards</a> scannable as Amiibo.</p>
+
+<h2 id="one-more-thing">One More Thing</h2>
+
+<p>Here’s the thing that really caught my attention. Does <code class="language-plaintext highlighter-rouge">0x1900</code> have any significance? Look through the character numbers again and one might stand out. Mewtwo’s character number is <code class="language-plaintext highlighter-rouge">0x1996</code>. Any longtime Pokémon fan will recognize that number. 1996 is the <a href="https://en.wikipedia.org/wiki/Pokémon_Red_and_Blue">year Pokémon Red, Green, and Blue released in Japan</a>. This could be complete coincidence, especially with it being Mewtwo of all Pokémon. Still it’s too good to ignore.</p>
+
+<h2 id="wait-what-about-pokémon-trainer">Wait, What About Pokémon Trainer?</h2>
+
+<p>Actually, there are three Amiibo I haven’t mentioned: <a href="https://amiibo.life/amiibo/super-smash-bros/pokemon-trainer">Pokémon Trainer</a>, <a href="https://amiibo.life/amiibo/pokemon/shadow-mewtwo">Shadow Mewtwo</a>, and <a href="https://amiibo.life/amiibo/pokemon/detective-pikachu">Detective Pikachu</a>. They don’t fit the convention of the other Amiibo.</p>
+
+<p>Personally I would have assigned Pokémon Trainer the number <code class="language-plaintext highlighter-rouge">0x1900</code>. That would avoid interfering with Pokédex numbers. Instead Nintendo assigned him the number <code class="language-plaintext highlighter-rouge">0x1D40</code>. Subtracting <code class="language-plaintext highlighter-rouge">0x1900</code> gives <code class="language-plaintext highlighter-rouge">0x440</code> or 1088. I don’t see any significance to those numbers. At the time of this writing, the highest national Pokédex number is <a href="https://bulbapedia.bulbagarden.net/wiki/Zarude_%28Pokémon%29">Zarude at 893</a>. Give it a few years and we may have a conflict on this number.</p>
+
+<p>The Shadow Mewtwo card and Detective Pikachu figurine are particularly unusual. Nintendo assigned them the numbers <code class="language-plaintext highlighter-rouge">0x1D00</code> and <code class="language-plaintext highlighter-rouge">0x1D01</code>, respectively. Typically Nintendo assigns the same character number to different Amiibo even if they come from different Amiibo series. For example, the <a href="https://amiibo.life/amiibo/skylanders-superchargers/hammer-slam-bowser">Hammer Slam Bowser figurine</a> from the <a href="https://amiibo.life/amiibo/skylanders-superchargers">Skylanders SuperChargers series</a> has the character number <code class="language-plaintext highlighter-rouge">0x005</code> matching the <a href="https://amiibo.life/amiibo/super-mario/bowser">Bowser</a> and <a href="https://amiibo.life/amiibo/super-mario/bowser-wedding-outfit">Wedding Bowser</a> figurines from the Super Mario Bros. series.</p>
+
+<p>Another oddity is that Shadow Mewtwo and Detective Pikachu don’t work as trainable Amiibo in Super Smash Bros. Ultimate. Scanning Shadow Mewtwo disappointingly does nothing and Detective Pikachu gives you a spirit as consolation.</p>
+
+<p>Calculating <code class="language-plaintext highlighter-rouge">0x1D00</code> - <code class="language-plaintext highlighter-rouge">0x1900</code> gives 1024. Detective Pikachu is one later at 1025. These are also outside the current national Pokédex. Any programmer will quickly notice that 1024 is a power of 2 (2^10). Outside of that I see no significance.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>This post is already longer than I anticipated. I hope you enjoy this fun discovery hidden in the depths of Amiibo.</p>
+
+  </div><a class="u-url" href="/amiibo/2020/10/12/amiibo-easter-egg.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Tricks of the Trade</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Tricks of the Trade</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/rob-brown"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">rob-brown</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Writing about best development practices and other topics.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

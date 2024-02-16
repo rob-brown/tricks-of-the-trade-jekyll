@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Installing Java on Nerves | Tricks of the Trade</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Installing Java on Nerves" />
+<meta name="author" content="Robert Brown" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="At work we have hardware product that’s mostly written in C running on a Raspberry Pi 3. I have been pushing to adopt Nerves, an embedded platform that uses Elixir." />
+<meta property="og:description" content="At work we have hardware product that’s mostly written in C running on a Raspberry Pi 3. I have been pushing to adopt Nerves, an embedded platform that uses Elixir." />
+<link rel="canonical" href="/elixir/nerves/java/2016/11/05/installing-java-on-nerves.html" />
+<meta property="og:url" content="/elixir/nerves/java/2016/11/05/installing-java-on-nerves.html" />
+<meta property="og:site_name" content="Tricks of the Trade" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-11-05T18:30:00+00:00" />
+<script type="application/ld+json">
+{"datePublished":"2016-11-05T18:30:00+00:00","author":{"@type":"Person","name":"Robert Brown"},"dateModified":"2016-11-05T18:30:00+00:00","description":"At work we have hardware product that’s mostly written in C running on a Raspberry Pi 3. I have been pushing to adopt Nerves, an embedded platform that uses Elixir.","url":"/elixir/nerves/java/2016/11/05/installing-java-on-nerves.html","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"/elixir/nerves/java/2016/11/05/installing-java-on-nerves.html"},"headline":"Installing Java on Nerves","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Tricks of the Trade" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Tricks of the Trade</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about">About</a><a class="page-link" href="/hire-me">Hire Me</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Installing Java on Nerves</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2016-11-05T18:30:00+00:00" itemprop="datePublished">Nov 5, 2016
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Robert Brown</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>At work we have hardware product that’s mostly written in C running on a Raspberry Pi 3. I have been pushing to adopt <a href="http://nerves-project.org">Nerves</a>, an embedded platform that uses <a href="http://elixir-lang.org">Elixir</a>.</p>
+
+<p>To prove Nerves’s viability, I’m building a prototype. One of the requirements is to interact with a spectrometer that uses a Java library. Nerves doesn’t come with Java out of the box. However, Nerves is built on <a href="https://buildroot.org">Buildroot</a> which has a package for <a href="http://jamvm.sourceforge.net">JamVM</a>.</p>
+
+<p>JamVM is an alternative JVM for embedded systems. To include it, you have to create a custom system image for your platform (ex. Raspberry Pi 3). I won’t go into the details about building custom systems. You can read <a href="http://wsmoak.net/2016/10/17/building-using-custom-nerves-system.html">Wendy Smoak’s post about it</a>.</p>
+
+<p>JamVM runs Java 5. If that fits your requirements, then you can use the custom image. If you don’t want to use a custom image or need a newer version of Java, keep reading.</p>
+
+<p>I tried <a href="http://openjdk.java.net">OpenJDK</a> first. That turned out to be a convoluted mess. Frankly, I still don’t understand how <a href="https://en.wikipedia.org/wiki/IcedTea">IcedTea</a>, <a href="http://openjdk.java.net/groups/hotspot/">HotSpot</a>, <a href="https://en.wikipedia.org/wiki/GNU_Classpath">Classpath</a>, <a href="http://openjdk.java.net/projects/zero/">Zero</a>, <a href="https://evolvis.org/plugins/mediawiki/wiki/jalimo/index.php/Main_Page">Jalimo</a>, <a href="http://www.openembedded.org/wiki/OpenEmbedded">OpenEmbedded</a>, <a href="http://www.cacaojvm.org">CACAO</a>, and other projects relate to each other. Some projects appear abandoned. The others had poor documentation.</p>
+
+<p>Then I switched to the official <a href="https://www.oracle.com/java/index.html">Oracle Java</a>. (Note, the <a href="http://www.oracle.com/technetwork/licenses/standard-license-152015.html">OTN license</a> may not be compatible for your project.) The hard part here was figuring out which build to use. I tried a few and got <a href="http://www.oracle.com/technetwork/java/embedded/embedded-se/downloads/javase-embedded-downloads-2209751.html">Java embedded to work</a>.</p>
+
+<p>The Java embedded download is different from the others. Rather than give out a pre-built binaries, it instead has a <code class="language-plaintext highlighter-rouge">jrecreate.sh</code> script. This lets you make a JRE that fits your needs. I made a full JRE like this:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./bin/jrecreate.sh <span class="nt">--dest</span> ~/Nerves/ejdk
+</code></pre></div></div>
+
+<p>This produced the necessary binaries for me to add to Nerves. They weigh in at 55 MB. Alternatively, I could have made a minimal build like this:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./bin/jrecreate.sh <span class="nt">--profile</span> compact1 <span class="nt">--dest</span> ~/Nerves/ejdk
+</code></pre></div></div>
+
+<p>That build is just 11 MB. If I need I’ll switch to the smaller JRE later.</p>
+
+<p>With the JRE built, it’s pretty straightforward to add it to Nerves. Buildroot has a directory called <code class="language-plaintext highlighter-rouge">rootfs-additions</code>. This directory includes files you want copied into your root file system. Its contents will look familiar. You can include <code class="language-plaintext highlighter-rouge">bin</code>, <code class="language-plaintext highlighter-rouge">usr</code>, <code class="language-plaintext highlighter-rouge">lib</code>, <code class="language-plaintext highlighter-rouge">etc</code>, and other subdirectories you would expect from a standard Unix-based system.</p>
+
+<p>First, create a local <code class="language-plaintext highlighter-rouge">rootfs-additions</code>. I did it like this:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>config/rootfs-additions
+<span class="nb">cp</span> ~/Nerves/ejdk/<span class="k">*</span> config/rootfs-additions
+</code></pre></div></div>
+
+<p>My resulting directory looks like this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>firmware
+└── config
+    ├── config.exs
+    └── rootfs-additions
+        ├── bin
+        |   ├── java
+        |   ├── jjs
+        |   ├── keytool
+        |   └── ...
+        └── lib
+            ├── applet
+            ├── arm
+            ├── cmm
+            └── ...
+</code></pre></div></div>
+
+<p>Next, we need to tell Nerves about our local <code class="language-plaintext highlighter-rouge">rootfs-additions</code>. In <code class="language-plaintext highlighter-rouge">config.exs</code> add these lines:</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">config</span> <span class="ss">:nerves</span><span class="p">,</span> <span class="ss">:firmware</span><span class="p">,</span>
+  <span class="ss">rootfs_additions:</span> <span class="s2">"config/rootfs-additions"</span>
+</code></pre></div></div>
+
+<p>That’s all there is to it. Nerves will now grab these files and include them in your firmware image.</p>
+
+<p>Note, your project’s <code class="language-plaintext highlighter-rouge">rootfs-additions</code> will overwrite any files of the same name that Nerves includes in its <code class="language-plaintext highlighter-rouge">rootfs-additions</code>. This is useful, for example, to overwrite the config file at <code class="language-plaintext highlighter-rouge">/etc/erlinit.config</code>.</p>
+
+<p>Nerves has been a great platform to work with. It’s a refreshing advance after having used C-based firmware for years. Nerves makes it easy to build firmware at a high level. Extending its capabilities is  simple too. I look forward to seeing how Nerves continues to evolve.</p>
+
+  </div><a class="u-url" href="/elixir/nerves/java/2016/11/05/installing-java-on-nerves.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Tricks of the Trade</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Tricks of the Trade</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/rob-brown"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">rob-brown</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Writing about best development practices and other topics.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

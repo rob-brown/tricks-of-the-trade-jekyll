@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Reverse Engineering Dampé’s Dungeon Adventure | Tricks of the Trade</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Reverse Engineering Dampé’s Dungeon Adventure" />
+<meta name="author" content="Robert Brown" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Intro" />
+<meta property="og:description" content="Intro" />
+<link rel="canonical" href="/amiibo/2022/10/18/reverse-engineering-dampes-dungeon-adventure.html" />
+<meta property="og:url" content="/amiibo/2022/10/18/reverse-engineering-dampes-dungeon-adventure.html" />
+<meta property="og:site_name" content="Tricks of the Trade" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-10-18T02:49:00+00:00" />
+<script type="application/ld+json">
+{"datePublished":"2022-10-18T02:49:00+00:00","author":{"@type":"Person","name":"Robert Brown"},"dateModified":"2022-10-18T02:49:00+00:00","description":"Intro","url":"/amiibo/2022/10/18/reverse-engineering-dampes-dungeon-adventure.html","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"/amiibo/2022/10/18/reverse-engineering-dampes-dungeon-adventure.html"},"headline":"Reverse Engineering Dampé’s Dungeon Adventure","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Tricks of the Trade" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Tricks of the Trade</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about">About</a><a class="page-link" href="/hire-me">Hire Me</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Reverse Engineering Dampé’s Dungeon Adventure</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2022-10-18T02:49:00+00:00" itemprop="datePublished">Oct 18, 2022
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Robert Brown</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h2 id="intro">Intro</h2>
+
+<p>Dampé’s Dungeon Adventure is my favorite feature in the Link’s Awakening remake. Since the dungeons can be stored on an amiibo figurine, the data is available to be easily read from it. I’ve been meaning to decode that data. Now three years later I finally got to it. It took about a week to decode the data for this post. Most of that time was <a href="https://www.icloud.com/numbers/0f0fVIs3UOVA_-RFASWRlPB_w#Link's_Awakening_Dungeon_Catalog">cataloging the 187 available chambers</a>.</p>
+
+<h2 id="dungeon-data">Dungeon Data</h2>
+
+<p>Like all games that store data to an amiibo, the game has 216 bytes available. Link’s Awakening more or less uses that full space. I will go through each of the significant portions of that data. My explanations will use hexadecimal format, meaning that values are base 16 using 0-9 and A-F.</p>
+
+<h3 id="basic-info">Basic Info</h3>
+
+<p>The first four bytes are in the following format: <code class="language-plaintext highlighter-rouge">0x03XX0100</code>. Three of the four bytes appear to always be the same. The <code class="language-plaintext highlighter-rouge">XX</code> portion changes depending on the challenge chosen. Dampé has 24 challenges numbered <code class="language-plaintext highlighter-rouge">0x00</code> to <code class="language-plaintext highlighter-rouge">0x17</code>. There’s also a free-play mode which has the value <code class="language-plaintext highlighter-rouge">0x30</code>. So, must dungeons you see on amiibo will probably start with <code class="language-plaintext highlighter-rouge">0x03300100</code>.</p>
+
+<p>The tutorial levels are mostly the same as the free-play mode. The main difference is that they may have some extra restrictions: no sword, limited hearts, or limited time. There are also chamber placement restrictions. Some chambers are placed by Dampé. In the chamber data, these locked chambers are indicated by a <code class="language-plaintext highlighter-rouge">0x0000</code> chamber value (more on this in a moment).</p>
+
+<p>The next four bytes are a mystery. I haven’t decoded them yet. They remain constant for a dungeon arrangement. Changing the dungeon changes these bytes, even if the same chamber is placed in the same spot. It seems like a random ID or perhaps a salt to make cryptanalysis on the tamper protection harder. Any time these bytes change, the dungeon must be played through to save it to an amiibo.</p>
+
+<h3 id="chamber-data">Chamber Data</h3>
+
+<p>The next 128 bytes are the most interesting. This is the chamber data. A dungeon is an 8x8 grid (up to 64 chambers). Each chamber gets two bytes. The chambers are stored in row-major format, meaning all of the first row is stored. After that is the second row and so on.</p>
+
+<p>Looking at the raw data, a chamber will look like this: <code class="language-plaintext highlighter-rouge">0x6201</code>. Cells without a chamber are always <code class="language-plaintext highlighter-rouge">0xFFFF</code>. The data is stored in little-endian format. Basically that means the least-significant byte is stored first. This can be more efficient for computers to work with but the bytes are backwards from how we would normally read them. So, let’s flip it around: <code class="language-plaintext highlighter-rouge">0x0162</code>.</p>
+
+<p>There are 4 hex digits. We’ll ignore the first digit for now. The latter three are the important bits that determine the room. In short, these three digits represent coordinates: dungeon, y-coordinate, and x-coordinate.</p>
+
+<p>The dungeons are numbered <code class="language-plaintext highlighter-rouge">0x0</code> to <code class="language-plaintext highlighter-rouge">0xA</code>. If you look at the catalog of chambers, you’ll notice dungeon <code class="language-plaintext highlighter-rouge">0x8</code> is not used. That is the Wind Fish’s egg. There are no chambers from that dungeon.</p>
+
+<p>Now for a brief history lesson. The original release of Link’s Awakening had the Wind Fish’s Egg as the final dungeon. In Link’s Awakening DX (released on Game Boy <strong>Color</strong>, there was a new dungeon released: the <strong>Color Dungeon</strong>. This is dungeon <code class="language-plaintext highlighter-rouge">0x9</code>. It is optional, though you can play through it fairly early in the game if you know where it is.</p>
+
+<p>But wait, I said it goes to <code class="language-plaintext highlighter-rouge">0xA</code>. What about that? Dungeon <code class="language-plaintext highlighter-rouge">0xA</code> isn’t a dungeon. It’s a grab bag of extra chambers. They are mostly some mini-bosses from the mini-dungeons.</p>
+
+<p>Now for the x-y coordinates. You’ll notice that the y-coordinate comes first though we typically use the x-coordinate first. Remember the chambers are stored in row-major order. The y-coordinate determines the row. Then the x-coordinate picks the chamber within that row.</p>
+
+<p>The x-y coordinates are not coordinates in your dungeon. Rather they are the coordinates of the chamber in the original dungeon.</p>
+
+<p>If these are coordinates, then what about dungeons with multiple floors? There are two dungeons with multiple floors: The Key Cavern with two floors and the Eagle’s Tower with “four” floors.</p>
+
+<p>If you map out all the chambers for the Key Cavern, they look like this:</p>
+
+<p><img height="200" src="/assets/img/key-cavern.jpg" /></p>
+
+<p>Doing the same for the Eagle’s Tower:</p>
+
+<p><img height="200" src="/assets/img/eagles-tower.jpg" /></p>
+
+<p>There’s an interesting thing to note about the Eagle’s Tower. The fourth floor is unreachable. You have to collapse the fourth floor into the third floor in order to reach it. In reality, you are probably traveling to and from the third and fourth floors. Internally, the game is probably re-mapping the stairs and doors after you break the pillars. It’s a similar trick to how the multiple floors works in the first place to make a three-dimensional dungeon into a two-dimensional dungeon (which is really just a one-dimensional list of chambers anyway).</p>
+
+<p>The keen eye will notice these two dungeons still fit into an 8x8 grid. This means you could logically create a multi-floor dungeon yourself even though Dampé’s map will show it as a single floor.</p>
+
+<p>There are a few chambers that don’t exist in the original dungeons. The primary chambers being where you can play one of the nightmares as if they were a mini-boss. If you check these coordinates against the dungeon maps, they point to a location with no chamber. Perhaps through modding or glitches you could get to these chambers in the original dungeons. Or maybe it’s just a convenient organization system. There are a few chambers that don’t perfectly match their original counterparts.</p>
+
+<p>That was a long explanation of the coordinate system. As promised, back to the first hex digit. Dampé’s Dungeon Adventure lets you add “plus effects” to a chamber. This can alter it in some way such as doubling the enemies or randomly dropping bombs/hearts/rupees. Here are the values of each plus effect:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Effect</th>
+      <th style="text-align: right">ID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">No effect</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Bombs</td>
+      <td style="text-align: right">1</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Rupees</td>
+      <td style="text-align: right">2</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Hearts</td>
+      <td style="text-align: right">3</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Wallmaster</td>
+      <td style="text-align: right">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Double enemies</td>
+      <td style="text-align: right">5</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Shadow Link</td>
+      <td style="text-align: right">6</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The Wallmaster and Shadow Link enemies are limited to one per dungeon. The other effects can be added multiple times. Though the double enemy modifier may only be used on chambers with enemies.</p>
+
+<p>Since the numbers are continuous instead of powers of 2 (1, 2, 4, 8, …) naturally a chamber may only have one effect. They cannot stack.</p>
+
+<h3 id="bookkeeping-data">Bookkeeping Data</h3>
+
+<p>After the chamber data are two names, each up to 32 bytes. The first name is the owner who created the dungeon. The second is the name of the best completion time. They are almost certainly the same name unless you pass the data to another account via amiibo.</p>
+
+<p>Note that the names are from the Nintendo Switch account name, not the Link’s Awakening save file name.</p>
+
+<p>The names are store in UTF-8 format. It’s a complicated format but here’s a brief explanation. A character (called a grapheme) can be made of one or more code points. A code point can be between 1-4 bytes. All the ASCII characters (think Roman letters, Arabic numerals, common symbols) all fit in one byte. Accented letters, other alphabets, less-common symbols are more than one byte.</p>
+
+<p>Nintendo Switch account names are limited to 10 characters. Seeing that a single code point can be up to four bytes and graphemes can have more than one code point, it’s conceivable that you could overflow the 32-byte limit on these names. On the Nintendo Switch keyboard, I don’t think there are any characters you can type that is more than two-bytes long. So 32 bytes is plenty.</p>
+
+<p>The next data field is the best completion time. It is a four-byte integer (little endian) measured in centiseconds. Yes, centiseconds. The game never shows more than two decimal points. So there’s no need to use a more standard unit like milliseconds. This make the value more compact.</p>
+
+<p>Even though four bytes could store a larger value, the timer is capped at 59:59.99. I made a full 64-chamber dungeon, including every boss and mini-boss. I was able to complete that labyrinth well under the hour limit.</p>
+
+<p>Note that you must first play through and beat a dungeon before you can save it to an amiibo. There will always be a completion time.</p>
+
+<p><img width="95%" src="/assets/img/labyrinth.png" /></p>
+
+<h3 id="equipment">Equipment</h3>
+
+<p>The next four bytes (really just two) are also interesting. They contain all the equipment you have when you saved the dungeon. Since you can’t get a chamber until you’ve beaten the associated dungeon, you will always be able to beat it (barring any mods or sequence skips). This also ensures that someone else who plays the dungeon will be on the same footing as you. So they can’t get a faster completion time just by having better equipment.</p>
+
+<p>The equipment is stored in a bit field. This means each binary digit determines the gear you have. 1 means you have it, 0 means you don’t.</p>
+
+<p>Even though this is a little endian number, I’m going to treat it as big endian for simplicity. It seems to fit better treating it that way. Here are the values of each item. Some values are guessed because you have to beat two dungeons before Dampé lets you build your first dungeon.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Equipment</th>
+      <th style="text-align: right">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Sword</td>
+      <td style="text-align: right">1</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Magic Powder</td>
+      <td style="text-align: right">2</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Roc’s Feather</td>
+      <td style="text-align: right">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Power Bracelet</td>
+      <td style="text-align: right">8</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Ocarina</td>
+      <td style="text-align: right">16</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Bottle from Ghost</td>
+      <td style="text-align: right">32</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Bottle from Fishing</td>
+      <td style="text-align: right">64</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Bottle from Dampé</td>
+      <td style="text-align: right">128</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Pegasus Boots</td>
+      <td style="text-align: right">256</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Shield</td>
+      <td style="text-align: right">512</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Bomb</td>
+      <td style="text-align: right">1024</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Bow</td>
+      <td style="text-align: right">2048</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Hookshot</td>
+      <td style="text-align: right">4096</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Boomerang</td>
+      <td style="text-align: right">8192</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Magic Rod</td>
+      <td style="text-align: right">16,384</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Shovel</td>
+      <td style="text-align: right">32,768</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The next four bytes work the same. I call these the enhancements. They change your equipment. For example, upgrading the Power Bracelet to Powerful Bracelet, having a fairy in a bottle, or learning a song on the ocarina.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Enhancement</th>
+      <th style="text-align: right">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Fairy in bottle 1</td>
+      <td style="text-align: right">1</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Fairy in bottle 2</td>
+      <td style="text-align: right">2</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Fairy in bottle 3</td>
+      <td style="text-align: right">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Secret Medecine</td>
+      <td style="text-align: right">8</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Flippers</td>
+      <td style="text-align: right">16</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Ballad of the Wind Fish</td>
+      <td style="text-align: right">32</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Mango’s Mambo</td>
+      <td style="text-align: right">64</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Frog’s Song of Soul</td>
+      <td style="text-align: right">128</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Koholint Sword</td>
+      <td style="text-align: right">256</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Mirror Shield</td>
+      <td style="text-align: right">512</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Powerful Bracelet</td>
+      <td style="text-align: right">1024</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Double Magic Dust</td>
+      <td style="text-align: right">2048</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Double Bombs</td>
+      <td style="text-align: right">4096</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Double Arrows</td>
+      <td style="text-align: right">8192</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Red Mail</td>
+      <td style="text-align: right">16,384</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Blue Mail</td>
+      <td style="text-align: right">32,768</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The red and blue mail are mutually exclusive. Through modding you could give yourself both. Not sure how the game would handle that visually.</p>
+
+<h3 id="tamper-protection">Tamper Protection</h3>
+
+<p>The final four bytes are a CRC. Basically it’s a value that can be used to verify the data hasn’t been tampered with. In order to modify the data on an amiibo, you would also need to update this value accordingly. Otherwise, the data will be rejected. Super Smash Bros. Ultimate has a similar CRC for its data. Though it puts the CRC as the first four bytes instead of the last four.</p>
+
+<h2 id="missing-data">Missing Data</h2>
+
+<p>So what’s missing? The number of hearts you have are not recorded. So someone playing a shared dungeon could have more or less. This could give them an advantage to get a faster time but a good player won’t get hurt much anyway.</p>
+
+<p>There are no time limits. That’s a feature strictly of a few Dampé challenges. Setting the dungeon type to one of those challenges might get you a time limit.</p>
+
+<p>The challenges that don’t allow you a sword don’t actually change the equipment. That’s also a feature of the Dampé challenges. Though conceivable you could modify the equipment list to take away the sword and other equipment/enhancements.</p>
+
+<p>There’s no way to name a dungeon. Your dungeon will automatically be named “Shrine/Cave/Maze/Labyrinth of [Name]”. The name is determined by the number of chambers in the dungeon.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Classification</th>
+      <th style="text-align: right">Number of Chambers</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Shrine</td>
+      <td style="text-align: right">3-10</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Cave</td>
+      <td style="text-align: right">11-20</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Maze</td>
+      <td style="text-align: right">21-30</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Labyrinth</td>
+      <td style="text-align: right">31-64</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>No descriptions either. These are determined by the dungeon level. Only Dampé’s challenges have semi-meaningful descriptions.</p>
+
+<p>There is no creation date (for dungeons you’ve made) or received date (for chambers you’ve received via amiibo). Both of those are stored in the game itself.</p>
+
+<p>How stairs are connected are not in the data. Instead, they recalculated each time a chamber is placed. The stairs are shown in one of the four corners of the tile. The game then calculates the distance between every pair of stairs. It then sorts them by distance (ascending). When distance is equal, it sorts by row (ascending). When row is equal, it sorts by column (ascending). It then runs through the list and pairs up the stairs. Since it uses a greedy algorithm you can fabricate where all the stairs are close together but one or more pairings are far apart. This would not be a good algorithm to minimize digging tunnels. Though it can be used to draw a happy little tree.</p>
+
+<p><img width="95%" src="/assets/img/dungeon-stairs1.png" /></p>
+
+<p><img width="95%" src="/assets/img/dungeon-stairs2.png" /></p>
+
+<p><img width="95%" src="/assets/img/dungeon-stairs3.png" /></p>
+
+<p>The UI has seven distinct colors assigned in this order:</p>
+
+<ol>
+  <li>Green</li>
+  <li>Cyan</li>
+  <li>Magenta</li>
+  <li>Yellow</li>
+  <li>Red</li>
+  <li>Blue</li>
+  <li>Orange</li>
+</ol>
+
+<p>Knowing that order, you can follow along with the screenshots above to confirm the algorithm works as described.</p>
+
+<h2 id="resources">Resources</h2>
+
+<p>For full details of the chambers, <a href="https://www.icloud.com/numbers/0f0fVIs3UOVA_-RFASWRlPB_w#Link's_Awakening_Dungeon_Catalog">check out the chamber catalog</a>. It almost certainly contains errors or missing details. There is a lot to note for 187 chambers.</p>
+
+<p>I also used HexFiend for viewing the files. It has a feature to use TCL scripts to parse out binary data. I’ve included my script below. Note that the amiibo data must first be decrypted for this binary template script to be useful.</p>
+
+<script src="https://gist.github.com/rob-brown/fbff18427994325aeadd32af3afdc11c.js"></script>
+
+<h2 id="updates">Updates</h2>
+
+<p>20 Oct 2022: Added details about the stair-pairing algorithm.</p>
+
+  </div><a class="u-url" href="/amiibo/2022/10/18/reverse-engineering-dampes-dungeon-adventure.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Tricks of the Trade</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Tricks of the Trade</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/rob-brown"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">rob-brown</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Writing about best development practices and other topics.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
