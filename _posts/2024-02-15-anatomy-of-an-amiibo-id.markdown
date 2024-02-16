@@ -172,7 +172,7 @@ These are the current series:
 | `17` | Power Pros |
 | `18` | Monster Hunter |
 | `19` | Yu-Gi-Oh! |
-| `20` | --- |
+| `1A` | --- |
 | `1B` | Xenoblade Chronicles |
 | --- | --- |
 | `FF` | Super Nintendo World |
