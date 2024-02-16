@@ -24,8 +24,8 @@ description: >-
   Writing about best development practices and other topics.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: robby_brown
-github_username:  rob-brown
+# twitter_username: robby_brown
+github_username: rob-brown
 
 # Build settings
 # theme: minima
