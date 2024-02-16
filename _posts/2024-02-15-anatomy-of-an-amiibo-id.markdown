@@ -214,22 +214,22 @@ I'll start by dumping a large table of data then explain what it means.
 | 078 | Classic Nintendo | Nintendo |
 | 07C | Mii | Nintendo |
 | 080 | Splatoon | Nintendo |
-| ... | ... |
+| ... | ... | ... |
 | 09C-09D | Mario Sports Superstars | Nintendo |
-| ... | ... |
+| ... | ... | ... |
 | 0A4 | ARMS | Nintendo |
-| ... | ... |
+| ... | ... | ... |
 | 190-1D4 | Pokémon | Nintendo/GameFreak |
-| ... | ... |
+| ... | ... | ... |
 | 1F0 | Kirby | Nintendo/HAL Labs |
 | 1F4 | BoxBoy | Nintendo/HAL Labs
-| ... | ... |
+| ... | ... | ... |
 | 210 | Fire Emblem | Nintendo |
-| ... | ... |
+| ... | ... | ... |
 | 224 | Xenoblade | Nintendo/Monolith Soft |
 | 228 | Earthbound | Nintendo |
 | 22C | Chibi Robo | Nintendo |
-| ... | ... |
+| ... | ... | ... |
 | 320 | Sonic | Sega |
 | 324 | Bayonetta | Sega/Platinum Games |
 | 328 | x |
