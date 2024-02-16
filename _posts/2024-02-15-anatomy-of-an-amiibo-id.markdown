@@ -150,7 +150,7 @@ These are the current series:
 | `00` | Super Smash Bros. |
 | `01` | Super Mario |
 | `02` | Chibi-Robo! |
-| `03` | Yoshi's Woolly World |
+| `03` | Yoshi |
 | `04` | Splatoon |
 | `05` | Animal Crossing |
 | `06` | 8-bit Mario |
@@ -170,10 +170,10 @@ These are the current series:
 | `15` | Mega Man |
 | `16` | Diablo |
 | `17` | Power Pros |
-| `18` | Monster Hunter Rise |
+| `18` | Monster Hunter |
 | `19` | Yu-Gi-Oh! |
 | `20` | --- |
-| `1B` | Xenoblade Chronicles 3 |
+| `1B` | Xenoblade Chronicles |
 | --- | --- |
 | `FF` | Super Nintendo World |
 
@@ -197,7 +197,7 @@ I'll start by dumping a large table of data then explain what it means.
 |---:|:---|:---|
 | 000-002 | Super Mario Bros. | Nintendo |
 | 004 | x |
-| 008 | Yoshi's Wooly World | Nintendo |
+| 008 | Yoshi | Nintendo |
 | 00C | Donky Kong | Nintendo |
 | 010 | Legend of Zelda | Nintendo |
 | 014 | Breath of the Wild | Nintendo |
@@ -290,7 +290,7 @@ I'll start by dumping a large table of data then explain what it means.
 
 The series IDs `000`-`319` are reserved for Nintendo. They don't appear to follow a distinct pattern. So I won't say more about them.
 
-`320` and beyond are for third-party developers. Notice that I set up the table so that each entry ends with 0, 4, 8, or C (12 decimal).
+`320` and beyond are for third-party developers. Notice that I set up the table so that each entry ends with `0`, `4`, `8`, or `C` (12 decimal).
 I call each entry a "slot". One slot is can have 64 amiibo (ex. `3740`-`377F`) ignoring variants. Smaller publishers (ex. Yacht Club
 Games, maker of Shovel Knight) are assigned a single slot. Larger publishers that make multiple games are given five slots. This is
 enough for 320 amiibo (ignoring variants) across five game series.
@@ -303,7 +303,8 @@ That's enough for 153 more major publishers. amiibo have been around for almost 
 
 ## Possible Cancelations
 
-The following tables show gaps in the serial numbers. There's also some speculation about what might have used those numbers.
+The following tables show gaps in the serial numbers. There's also some speculation about what might have used those numbers. At the time of
+writing, the latest serial number is `043E`.
 
 | Range | Size | Speculation |
 |:---|---:|:---|
@@ -315,8 +316,8 @@ The following tables show gaps in the serial numbers. There's also some speculat
 | `351` | 1 | Probably a Toon LoZ amiibo (Ganondorf?) |
 | `357` | 1 | Probably a BotW amiibo (Calamity Ganon?) |
 | `39A` | 1 | Probably a Link's Awakening amiibo (Marin?) |
-| `3D8`—`40B` | 52 | Probably Animal Crossing cards, increase, 48 to 100 |
-| `416`—`417` | 2 | Possibly Slatoon 3 or Tears of the Kingdom |
+| `3D8`—`40B` | 52 | Probably Animal Crossing cards, increase 48 to 100 |
+| `416`—`417` | 2 | Possibly Splatoon 3 or Tears of the Kingdom |
 | `42F` | 1 | More Power-Up bands? (Link?) |
 | `431`—`432` | 2 | More Power-Up bands? (Donkey Kong? Diddy Kong?) |
 | `436`—`43C` | 7 | Maybe Splatoon 3 or Xenoblade but probably not |
